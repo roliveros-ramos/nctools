@@ -18,7 +18,7 @@
 #' @export
 #'
 #' @examples
-nc_changePrimeMeridian_v2 = function(filename, output, varid=NA, MARGIN=1, primeMeridian="center",
+nc_changePrimeMeridian = function(filename, output, varid=NA, MARGIN=1, primeMeridian="center",
                                   verbose=FALSE, overwrite=FALSE, compression=NA,
                                   mem.limit=3072, ignore.case=FALSE) {
 
