@@ -1,0 +1,76 @@
+# Rename variables and dimensions in a netCDF file
+
+Renames one or more variables and/or dimensions in an existing netCDF
+file, optionally writing the result to a new file.
+
+## Usage
+
+``` r
+nc_rename(
+  filename,
+  oldnames,
+  newnames,
+  output,
+  verbose = FALSE,
+  overwrite = FALSE
+)
+```
+
+## Arguments
+
+- filename:
+
+  Character string giving the path to the input netCDF file.
+
+- oldnames:
+
+  Character vector with the current names of variables or dimensions to
+  rename.
+
+- newnames:
+
+  Character vector with the replacement names. Must be in the same order
+  and of the same length as \`oldnames\`.
+
+- output:
+
+  Optional character string giving the path to the output file. If
+  omitted, \`overwrite = TRUE\` must be used and the original file is
+  replaced.
+
+- verbose:
+
+  Logical. If \`TRUE\`, print the renaming operations performed.
+
+- overwrite:
+
+  Logical. If \`TRUE\`, allow overwriting an existing output file. Use
+  this when modifying the original file in place.
+
+## Value
+
+Invisibly returns the path to the modified file, or \`NULL\` invisibly
+if nothing was changed.
+
+## Details
+
+Names in \`oldnames\` that do not match either a variable or a dimension
+in the file are ignored with a warning. If none of the requested names
+are found, the function exits without making changes.
+
+## See also
+
+\[nc_extract()\], \[write_ncdf()\]
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+nc_rename(
+  filename = "input.nc",
+  oldnames = c("lon", "lat", "temp"),
+  newnames = c("longitude", "latitude", "temperature"),
+  output = "renamed.nc"
+)
+} # }
+```
