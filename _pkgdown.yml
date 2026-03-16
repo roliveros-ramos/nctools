@@ -1,0 +1,50 @@
+url: ~
+template:
+  bootstrap: 5
+reference:
+  - title: Create and write netCDF files
+    desc: Functions to create new netCDF files and write data or attributes.
+    contents:
+      - write_ncdf
+
+  - title: Inspect netCDF structure
+    desc: Functions to inspect variables, dimensions, compression, and attributes.
+    contents:
+      - ncvar_dim
+      - ncvar_size
+      - ncdim_size
+      - ncdim_isUnlim
+      - ncvar_compression
+      - ncatt_get_all
+
+  - title: Modify netCDF structure
+    desc: Functions to rename, reconfigure, or update structural properties of existing files.
+    contents:
+      - nc_rename
+      - nc_unlim
+      - ncvar_change_compression
+      - ncatt_put_all
+
+  - title: Extract and transform variables
+    desc: Functions to extract, subset, concatenate, or transform variables in netCDF files.
+    contents:
+      - nc_extract
+      - nc_subset
+      - nc_rcat
+      - nc_apply
+      - nc_loc
+      - nc_changePrimeMeridian
+
+  - title: Summary statistics
+    desc: Functions to compute summary statistics over margins of netCDF variables.
+    contents:
+      - nc_mean
+      - nc_min
+      - nc_max
+      - nc_quantile
+
+  - title: Longitude utilities
+    desc: Helpers to detect and standardise longitude conventions.
+    contents:
+      - checkLongitude
+      - findPrimeMeridian

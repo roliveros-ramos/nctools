@@ -1,0 +1,212 @@
+# nctools
+
+### Tools for Writing and Manipulating netCDF Files
+
+At its core, **nctools** is designed to make it easy to write array data
+from R to netCDF files, then inspect and manipulate those files with
+lightweight helper functions.
+
+This R package, **nctools**, provides helper functions for creating,
+editing, subsetting, concatenating, and transforming netCDF files from
+within R. Its main entry point is
+**[`write_ncdf()`](reference/write_ncdf.md)**, which offers a quick and
+convenient way to write array data generated in R to netCDF files with
+minimal boilerplate.
+
+Built around **ncdf4**, the package also includes utilities for
+inspecting variables and dimensions, reading and writing attributes,
+renaming variables and dimensions, subsetting variables by dimension
+values, concatenating records along unlimited dimensions, changing
+longitude conventions, and applying summary functions over selected
+margins.
+
+The package is especially useful in modelling and environmental
+workflows where arrays are first generated or processed in R and then
+need to be exported to netCDF format for storage, exchange, or
+downstream analysis. See <https://roliveros-ramos.github.io/nctools/>
+for documentation and examples.
+
+### Installation
+
+``` r
+# Once available on CRAN:
+install.packages("nctools")
+
+# Development version from GitHub:
+# install.packages("remotes")
+remotes::install_github("roliveros-ramos/nctools")
+```
+
+**Note:** because **nctools** depends on **ncdf4**, installation may
+require a working system netCDF library.
+
+### Usage
+
+A typical workflow in **nctools** starts with array data already
+available in R. The function
+**[`write_ncdf()`](reference/write_ncdf.md)** provides a simple
+interface to turn those arrays into netCDF files by defining the
+variable name, dimensions, and metadata directly in R.
+
+Load the package:
+
+``` r
+library(nctools)
+```
+
+#### Quick start: write an array to a netCDF file
+
+The main entry point of the package is
+**[`write_ncdf()`](reference/write_ncdf.md)**, which makes it easy to
+export array data created in R to a netCDF file.
+
+``` r
+x <- array(rnorm(24), dim = c(4, 3, 2))
+
+write_ncdf(
+  x,
+  filename = "example.nc",
+  varid = "temp",
+  dim = list(
+    lon = seq(-72, -69, length.out = 4),
+    lat = seq(-20, -18, length.out = 3),
+    depth = c(0, 10)
+  ),
+  longname = "Temperature",
+  units = "degree_C"
+)
+```
+
+This creates a netCDF file directly from an R array, with named
+dimensions and basic metadata, in a single step.
+
+Once a netCDF file has been created, **nctools** provides a set of
+utilities for common follow-up tasks.
+
+Subset a variable using dimension bounds:
+
+``` r
+nc_subset(
+  filename = "example.nc",
+  varid = "temp",
+  output = "subset.nc",
+  lon = c(-71, -69),
+  depth = 10
+)
+```
+
+Compute a summary statistic over selected margins:
+
+``` r
+nc_mean(
+  filename = "example.nc",
+  varid = "temp",
+  MARGIN = c("lon", "lat"),
+  output = "temp_mean.nc"
+)
+```
+
+Change the longitude convention of a variable:
+
+``` r
+nc_changePrimeMeridian(
+  filename = "example.nc",
+  output = "example_180.nc",
+  varid = "temp",
+  MARGIN = "lon",
+  primeMeridian = "center"
+)
+```
+
+Useful entry points to explore the package include:
+
+``` r
+?write_ncdf
+?nc_subset
+?nc_apply
+?nc_changePrimeMeridian
+```
+
+### Contributions
+
+If you find a bug, have questions about the documentation, or want to
+suggest an enhancement, please [open an
+issue](https://github.com/roliveros-ramos/nctools/issues).
+
+Contributions are welcome as pull requests.
+
+# Package index
+
+## Create and write netCDF files
+
+Functions to create new netCDF files and write data or attributes.
+
+- [`write_ncdf()`](write_ncdf.md) : Write data to a netCDF file
+
+## Inspect netCDF structure
+
+Functions to inspect variables, dimensions, compression, and attributes.
+
+- [`ncvar_dim()`](ncvar_dim.md) : Get variable dimensions from a netCDF
+  file
+- [`ncvar_size()`](ncvar_size.md) : Get variable sizes from a netCDF
+  file
+- [`ncdim_size()`](ncdim_size.md) : Get dimension lengths from a netCDF
+  file
+- [`ncdim_isUnlim()`](ncdim_isUnlim.md) : Test whether dimensions are
+  unlimited
+- [`ncvar_compression()`](ncvar_compression.md) : Get variable
+  compression settings from a netCDF file
+- [`ncatt_get_all()`](ncatt_get_all.md) : Get all attributes from
+  variables or dimensions
+
+## Modify netCDF structure
+
+Functions to rename, reconfigure, or update structural properties of
+existing files.
+
+- [`nc_rename()`](nc_rename.md) : Rename variables and dimensions in a
+  netCDF file
+- [`nc_unlim()`](nc_unlim.md) : Set a dimension as unlimited
+- [`ncvar_change_compression()`](ncvar_change_compression.md) : Change
+  variable compression settings in a netCDF object
+- [`ncatt_put_all()`](ncatt_put_all.md) : Write multiple attributes to a
+  netCDF variable or file
+
+## Extract and transform variables
+
+Functions to extract, subset, concatenate, or transform variables in
+netCDF files.
+
+- [`nc_extract()`](nc_extract.md) : Extract a variable to a new netCDF
+  file
+- [`nc_subset()`](nc_subset.md) : Subset a variable in a netCDF file
+- [`nc_rcat()`](nc_rcat.md) : Concatenate records of a variable across
+  netCDF files
+- [`nc_apply()`](nc_apply.md) : Apply a function over margins of a
+  netCDF variable
+- [`nc_loc()`](nc_loc.md) : Locate the depth where a variable reaches a
+  given value
+- [`nc_changePrimeMeridian()`](nc_changePrimeMeridian.md) : Change the
+  prime meridian of a variable in a netCDF file
+
+## Summary statistics
+
+Functions to compute summary statistics over margins of netCDF
+variables.
+
+- [`nc_mean()`](nc_mean.md) [`nc_min()`](nc_mean.md)
+  [`nc_max()`](nc_mean.md) : Compute summary statistics of a netCDF
+  variable
+- [`nc_quantile()`](nc_quantile.md) : Compute sample quantiles of a
+  netCDF variable
+
+## Longitude utilities
+
+Helpers to detect and standardise longitude conventions.
+
+- [`checkLongitude()`](checkLongitude.md) : Standardise longitude values
+  to a selected prime meridian convention
+- [`findPrimeMeridian()`](findPrimeMeridian.md) : Identify the prime
+  meridian convention from longitude values
+
