@@ -1,19 +1,25 @@
 Package: nctools
-Version: 0.1.1
-Authors@R: c(
-    person("Ricardo", "Oliveros-Ramos", email="ricardo.oliveros@gmail.com", role=c("aut", "cre")))
-Title: Tools for manipulation netCDF files
-Description: Some tools for easy manipulation (creation and edition) of ncdf
-    files.
+Version: 0.2
+Title: Tools for Manipulating netCDF Files
+Description: Provides helper functions for creating, editing, subsetting,
+    concatenating, and transforming netCDF files. The package includes
+    utilities for writing arrays to netCDF, renaming variables and
+    dimensions, changing longitude conventions, and applying summary
+    functions over dimensions through 'ncdf4'.
+Authors@R: 
+    person("Ricardo", "Oliveros-Ramos",
+           email = "ricardo.oliveros@gmail.com",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-8069-2101"))
 Depends:
-    R (>= 3.0),
-    ncdf4
+    R (>= 4.0)
 Imports:
-    akima,
-    fields,
-    stats
+    ncdf4,
+    stats,
+    utils
 License: GPL-3
-URL: http://roliveros-ramos.github.io/nctools
+URL: https://roliveros-ramos.github.io/nctools, https://github.com/roliveros-ramos/nctools, https://roliveros-ramos.github.io/nctools/
 BugReports: https://github.com/roliveros-ramos/nctools/issues
 ByteCompile: TRUE
-RoxygenNote: 7.2.1
+Encoding: UTF-8
+RoxygenNote: 7.3.3
