@@ -2,13 +2,28 @@
 % Please edit documentation in R/nctools-auxiliar.R
 \name{ncdim_isUnlim}
 \alias{ncdim_isUnlim}
-\title{Is the dimention unlimited?}
+\title{Test whether dimensions are unlimited}
 \usage{
 ncdim_isUnlim(nc)
 }
 \arguments{
-\item{nc}{An open connection to a netCDF file as in nc_open(file).}
+\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
+}
+\value{
+A named logical vector indicating whether each dimension is
+  unlimited.
 }
 \description{
-Is the dimention unlimited?
+Returns whether each dimension in an open netCDF file is unlimited.
+}
+\examples{
+\dontrun{
+nc <- ncdf4::nc_open("input.nc")
+on.exit(ncdf4::nc_close(nc))
+
+ncdim_isUnlim(nc)
+}
+}
+\seealso{
+[ncdim_size()]
 }

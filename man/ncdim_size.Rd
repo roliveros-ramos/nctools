@@ -2,16 +2,27 @@
 % Please edit documentation in R/nctools-auxiliar.R
 \name{ncdim_size}
 \alias{ncdim_size}
-\title{Get the dimensions of the variables in a ncdf object.}
+\title{Get dimension lengths from a netCDF file}
 \usage{
 ncdim_size(nc)
 }
 \arguments{
-\item{nc}{An open connection to a netCDF file as in nc_open(file).}
+\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
 }
 \value{
-A named list with the dimensions of the variables.
+A named list giving the length of each dimension.
 }
 \description{
-Get the dimensions of the variables in a ncdf object.
+Returns the lengths of all dimensions in an open netCDF file.
+}
+\examples{
+\dontrun{
+nc <- ncdf4::nc_open("input.nc")
+on.exit(ncdf4::nc_close(nc))
+
+ncdim_size(nc)
+}
+}
+\seealso{
+[ncvar_dim()], [ncdim_isUnlim()]
 }

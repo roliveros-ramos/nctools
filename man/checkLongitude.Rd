@@ -2,20 +2,42 @@
 % Please edit documentation in R/nctools_spatial.R
 \name{checkLongitude}
 \alias{checkLongitude}
-\title{Check and correct Longitude values given the position of the Prime Meridian (International Reference Meridian)}
+\title{Standardise longitude values to a selected prime meridian convention}
 \usage{
 checkLongitude(x, primeMeridian = "center", sort = FALSE, ...)
 }
 \arguments{
-\item{x}{numeric vector of longitude values.}
+\item{x}{Numeric vector of longitude values.}
 
-\item{primeMeridian}{position of the Prime Meridian. Use "center" for [-180,180]
-range values and "left" for [0,360] range (Pacific centered).}
+\item{primeMeridian}{Character string specifying the target longitude
+convention. Use `"center"` for longitudes in the `[-180, 180]` range and
+`"left"` for longitudes in the `[0, 360]` range.}
 
-\item{sort}{sort longitude values?}
+\item{sort}{Logical. If `TRUE`, sort the output values after conversion.}
 
-\item{...}{}
+\item{...}{Additional arguments. Currently unused.}
+}
+\value{
+A numeric vector of longitude values expressed in the requested
+  convention.
 }
 \description{
-Check and correct Longitude values given the position of the Prime Meridian (International Reference Meridian)
+Converts longitude values to either the `[-180, 180]` convention or the
+`[0, 360]` convention.
+}
+\details{
+Longitude values are modified only when needed. For `primeMeridian =
+"center"`, values greater than `180` are shifted by subtracting `360`. For
+`primeMeridian = "left"`, negative values are shifted by adding `360`.
+}
+\examples{
+\dontrun{
+lon <- c(170, 180, 190, 350)
+
+checkLongitude(lon, primeMeridian = "center")
+checkLongitude(lon, primeMeridian = "left")
+}
+}
+\seealso{
+[findPrimeMeridian()]
 }

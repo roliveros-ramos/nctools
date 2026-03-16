@@ -2,7 +2,7 @@
 % Please edit documentation in R/nctools-main.R
 \name{nc_rename}
 \alias{nc_rename}
-\title{Renaming variable and dimensions in a netCDF File}
+\title{Rename variables and dimensions in a netCDF file}
 \usage{
 nc_rename(
   filename,
@@ -14,21 +14,46 @@ nc_rename(
 )
 }
 \arguments{
-\item{filename}{The filename of the original ncdf file.}
+\item{filename}{Character string giving the path to the input netCDF file.}
 
-\item{oldnames}{A string vector containing the names of the
-variable or dimensions in the file that are to be renamed.}
+\item{oldnames}{Character vector with the current names of variables or
+dimensions to rename.}
 
-\item{newnames}{A string vector containing the new names of
-the variables or dimensions.}
+\item{newnames}{Character vector with the replacement names. Must be in the
+same order and of the same length as `oldnames`.}
 
-\item{output}{Optional, the output file with the changes. By default,
-it will overwrite the old file.}
+\item{output}{Optional character string giving the path to the output file.
+If omitted, `overwrite = TRUE` must be used and the original file is
+replaced.}
 
-\item{verbose}{If TRUE, run verbosely.}
+\item{verbose}{Logical. If `TRUE`, print the renaming operations performed.}
 
-\item{overwrite}{overwrite output file if already exists?}
+\item{overwrite}{Logical. If `TRUE`, allow overwriting an existing output
+file. Use this when modifying the original file in place.}
+}
+\value{
+Invisibly returns the path to the modified file, or `NULL`
+  invisibly if nothing was changed.
 }
 \description{
-Renaming variable and dimensions in a netCDF File
+Renames one or more variables and/or dimensions in an existing netCDF file,
+optionally writing the result to a new file.
+}
+\details{
+Names in `oldnames` that do not match either a variable or a dimension in the
+file are ignored with a warning. If none of the requested names are found,
+the function exits without making changes.
+}
+\examples{
+\dontrun{
+nc_rename(
+  filename = "input.nc",
+  oldnames = c("lon", "lat", "temp"),
+  newnames = c("longitude", "latitude", "temperature"),
+  output = "renamed.nc"
+)
+}
+}
+\seealso{
+[nc_extract()], [write_ncdf()]
 }

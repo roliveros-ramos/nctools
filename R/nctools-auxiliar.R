@@ -5,19 +5,38 @@
 # Variables ---------------------------------------------------------------
 
 
-#' Get dimension names for each variable in a ncdf file
+#' Get variable dimensions from a netCDF file
 #'
-#' @param nc An open connection to a netCDF file as in nc_open(file).
-#' @param varid What variable to read the data from. Can be a string with the
-#' name of the variable or an object of class ncvar4. If set to NA,
-#' the function will determine if there is only one variable in the file and,
-#' if so, read from that, but if there are multiple variables in the file, an error is generated.
-#' @param value If TRUE, return a list with the value of the dimensions, not only the names of them.
+#' Returns the dimensions associated with one variable, or with all variables in
+#' an open netCDF file.
+#'
+#' @param nc An open netCDF connection created with [ncdf4::nc_open()].
+#' @param varid Variable identifier. This can be a character string giving the
+#'   variable name, or an object of class `ncvar4`. If `NULL`, dimensions are
+#'   returned for all variables in the file.
+#' @param value Logical. If `TRUE`, return the coordinate values of each
+#'   dimension instead of only the dimension names.
 #'
 #' @return
+#' If `varid` is `NULL`, a named list with one element per variable. If `varid`
+#' is supplied, the dimensions of the selected variable only. When
+#' `value = FALSE`, dimensions are returned as character vectors of dimension
+#' names. When `value = TRUE`, dimensions are returned as named lists of
+#' coordinate values.
+#'
+#' @seealso [ncvar_size()], [ncdim_size()], [ncdf4::nc_open()]
+#'
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' nc <- ncdf4::nc_open("input.nc")
+#' on.exit(ncdf4::nc_close(nc))
+#'
+#' ncvar_dim(nc)
+#' ncvar_dim(nc, varid = "temp")
+#' ncvar_dim(nc, varid = "temp", value = TRUE)
+#' }
 ncvar_dim = function(nc, varid=NULL, value=FALSE) {
 
   if (!inherits(nc, "ncdf4"))
@@ -39,51 +58,98 @@ ncvar_dim = function(nc, varid=NULL, value=FALSE) {
 }
 
 
-#' Get the size of the variables in a ncdf object.
+#' Get variable sizes from a netCDF file
 #'
-#' @param nc An open connection to a netCDF file as in nc_open(file).
-#' @param varid
+#' Returns the dimension sizes of a selected variable in an open netCDF file.
 #'
-#' @return
+#' @inheritParams ncvar_dim
+#'
+#' @return A numeric vector giving the dimension sizes of the selected variable.
+#'   If the file contains a single variable, that variable is used by default.
+#'
+#' @details
+#' If the file contains more than one variable, `varid` must be supplied.
+#'
+#' @seealso [ncvar_dim()], [ncdim_size()]
+#'
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' nc <- ncdf4::nc_open("input.nc")
+#' on.exit(ncdf4::nc_close(nc))
+#'
+#' ncvar_size(nc, varid = "temp")
+#' }
 ncvar_size = function(nc, varid=NULL) {
 
   if (!inherits(nc, "ncdf4"))
     stop("first argument (nc) is not of class ncdf4!")
 
   out = lapply(nc$var, function(x) x$size)
+  if(length(out)==1) varid = 1
+  if(length(out)>1 & is.null(varid)) stop("Multiple variables found, you must specify 'varid'.")
   if(!is.null(out)) return(out[[varid]])
-  return(out)
 }
 
 
-#' Get the compression of the variables in a ncdf object.
+#' Get variable compression settings from a netCDF file
 #'
-#' @param nc An open connection to a netCDF file as in nc_open(file).
-#' @param varid Either the name of the variable or an ncvar object.
+#' Returns the compression setting of one variable, or of all variables, in an
+#' open netCDF file.
+#'
+#' @inheritParams ncvar_dim
+#'
+#' @param varid Variable identifier. This can be a character string giving the
+#'   variable name, or an object of class `ncvar4`. If `NA`, compression
+#'   settings are returned for all variables in the file.
 #'
 #' @return
+#' If `varid` is `NA`, a named vector or list with the compression setting of
+#' each variable. Otherwise, the compression setting of the selected variable.
+#'
+#' @seealso [ncvar_change_compression()]
+#'
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' nc <- ncdf4::nc_open("input.nc")
+#' on.exit(ncdf4::nc_close(nc))
+#'
+#' ncvar_compression(nc)
+#' ncvar_compression(nc, varid = "temp")
+#' }
 ncvar_compression = function(nc, varid=NA) {
   if(is.na(varid)) return(sapply(nc$var, FUN=.getCompression))
   varid = .checkVarid(varid=varid, nc=nc)
   return(.getCompression(nc$var[[varid]]))
 }
 
-#' Change the compression of the variables in a ncdf object.
+#' Change variable compression settings in a netCDF object
 #'
-#' @param nc An open connection to a netCDF file as in nc_open(file, write=TRUE).
-#' @param varid Either the name of the variable or an ncvar object indicating whose compression value will be changed.
-#' If NA, all the variables will be changed to the new compression.
-#' @param compression The new compression value.
+#' Modifies the compression setting of one or more variables in an open netCDF
+#' object.
 #'
-#' @return
+#' @inheritParams ncvar_dim
+#' @param varid Variable identifier. This can be a character string giving the
+#'   variable name, or an object of class `ncvar4`. If `NA`, the compression
+#'   setting is changed for all variables in the file.
+#' @param compression Numeric compression level to assign.
+#'
+#' @return The modified netCDF object.
+#'
+#' @seealso [ncvar_compression()]
+#'
+#' @export
 #'
 #' @examples
+#' \dontrun{
+#' nc <- ncdf4::nc_open("input.nc")
+#' on.exit(ncdf4::nc_close(nc))
+#'
+#' nc <- ncvar_change_compression(nc, varid = "temp", compression = 4)
+#' }
 ncvar_change_compression = function(nc, varid=NA, compression) {
   if(is.na(varid)) {
     nc$var = lapply(nc$var, FUN=.setCompression, compression=compression)
@@ -99,14 +165,25 @@ ncvar_change_compression = function(nc, varid=NA, compression) {
 # Dimensions --------------------------------------------------------------
 
 
-#' Get the dimensions of the variables in a ncdf object.
+#' Get dimension lengths from a netCDF file
 #'
-#' @param nc An open connection to a netCDF file as in nc_open(file).
+#' Returns the lengths of all dimensions in an open netCDF file.
 #'
-#' @return A named list with the dimensions of the variables.
+#' @inheritParams ncvar_dim
+#'
+#' @return A named list giving the length of each dimension.
+#'
+#' @seealso [ncvar_dim()], [ncdim_isUnlim()]
+#'
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' nc <- ncdf4::nc_open("input.nc")
+#' on.exit(ncdf4::nc_close(nc))
+#'
+#' ncdim_size(nc)
+#' }
 ncdim_size = function(nc) {
 
   if (!inherits(nc, "ncdf4"))
@@ -116,14 +193,26 @@ ncdim_size = function(nc) {
 }
 
 
-#' Is the dimention unlimited?
+#' Test whether dimensions are unlimited
 #'
-#' @param nc  An open connection to a netCDF file as in nc_open(file).
+#' Returns whether each dimension in an open netCDF file is unlimited.
 #'
-#' @return
+#' @inheritParams ncvar_dim
+#'
+#' @return A named logical vector indicating whether each dimension is
+#'   unlimited.
+#'
+#' @seealso [ncdim_size()]
+#'
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' nc <- ncdf4::nc_open("input.nc")
+#' on.exit(ncdf4::nc_close(nc))
+#'
+#' ncdim_isUnlim(nc)
+#' }
 ncdim_isUnlim = function(nc) {
 
   if (!inherits(nc, "ncdf4"))
@@ -136,15 +225,29 @@ ncdim_isUnlim = function(nc) {
 
 # Attributes --------------------------------------------------------------
 
-#' Get all variable's attributes from a ncdf object
+#' Get all attributes from variables or dimensions
 #'
-#' @param nc An open connection to a netCDF file as in nc_open(file).
-#' @param type A character to choose attributes for variables ("var")
-#' or dimensions ("dim").
-#' @return A list with all the atributes.
+#' Returns all attributes associated with variables or dimensions in an open
+#' netCDF file.
+#'
+#' @inheritParams ncvar_dim
+#' @param type Character string indicating whether to return attributes for
+#'   variables (`"var"`) or dimensions (`"dim"`).
+#'
+#' @return A named list of attribute lists.
+#'
+#' @seealso [ncatt_put_all()], [ncdf4::ncatt_get()]
+#'
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' nc <- ncdf4::nc_open("input.nc")
+#' on.exit(ncdf4::nc_close(nc))
+#'
+#' ncatt_get_all(nc, type = "var")
+#' ncatt_get_all(nc, type = "dim")
+#' }
 ncatt_get_all = function(nc, type=c("var", "dim")) {
 
   if (!inherits(nc, "ncdf4"))
@@ -158,25 +261,55 @@ ncatt_get_all = function(nc, type=c("var", "dim")) {
 
 }
 
-#' Put several attributes to a ncdf object
+#' Write multiple attributes to a netCDF variable or file
 #'
-#' @param nc An open connection to a netCDF file as in nc_open(file).
-#' @param varid The variable whose attribute is to be written. Can be a
-#' character string with the variable's name, an object of class ncvar4,
-#' or an id contained in the "id" field of a ncvar object. As a special case,
-#' if varid==0, then a global attribute is written instead of a variable's
-#' attribute.
-#' @param attname The names of the attributes.
-#' @param attval The values of the attributes.
-#' @param prec Precision to write the attribute.
-#' @param verbose Can be set to TRUE if additional information is desired while
-#' the attribute is being created.
-#' @param definemode See 'definemode' in ncatt_put for details.
+#' Writes several attributes to a variable or to the global file metadata of an
+#' open netCDF file.
 #'
-#' @return
+#' @param nc An open netCDF connection created with [ncdf4::nc_open()].
+#' @param varid Variable identifier. This can be a character string giving the
+#'   variable name, an object of class `ncvar4`, or an integer id. As a special
+#'   case, `varid = 0` writes global attributes.
+#' @param attname Names of the attributes to write. Alternatively, this may be a
+#'   named vector or list of attribute values when `attval` is omitted.
+#' @param attval Values of the attributes to write. If omitted, `attname` must
+#'   be a named vector or list whose names are used as attribute names.
+#' @param prec Optional precision used when writing the attributes. Passed to
+#'   [ncdf4::ncatt_put()].
+#' @param verbose Logical. If `TRUE`, print additional information while writing
+#'   attributes.
+#' @param definemode Logical. Passed to [ncdf4::ncatt_put()]. See that function
+#'   for details.
+#'
+#' @details
+#' Attributes can be supplied either as parallel `attname` and `attval`
+#' arguments, or as a single named vector or list. Missing attribute names are
+#' not allowed.
+#'
+#' @return `NULL`, invisibly.
+#'
+#' @seealso [ncatt_get_all()], [ncdf4::ncatt_put()]
+#'
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' nc <- ncdf4::nc_open("input.nc", write = TRUE)
+#' on.exit(ncdf4::nc_close(nc))
+#'
+#' ncatt_put_all(
+#'   nc,
+#'   varid = "temp",
+#'   attname = c("long_name", "units"),
+#'   attval = list("Temperature", "degree_C")
+#' )
+#'
+#' ncatt_put_all(
+#'   nc,
+#'   varid = 0,
+#'   attval = list(title = "Example file", source = "nctools")
+#' )
+#' }
 ncatt_put_all = function(nc, varid, attname, attval,
                          prec=NA, verbose=FALSE, definemode=FALSE) {
 

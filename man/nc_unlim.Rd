@@ -2,16 +2,40 @@
 % Please edit documentation in R/nctools-main.R
 \name{nc_unlim}
 \alias{nc_unlim}
-\title{Make a dimension unlimited}
+\title{Set a dimension as unlimited}
 \usage{
 nc_unlim(filename, unlim, output = NULL)
 }
 \arguments{
-\item{unlim}{Name of the dimension to set as unlimited}
+\item{filename}{Character string giving the path to the input netCDF file.}
 
-\item{output}{Name of the output file. If NULL,
-replace the original value}
+\item{unlim}{Character string giving the name of the dimension to set as
+unlimited.}
+
+\item{output}{Optional character string giving the path to the output file.
+If `NULL`, the input file is replaced.}
+}
+\value{
+Invisibly returns the list of variable definitions used to create the
+  new file.
 }
 \description{
-Make a dimension unlimited
+Recreates a netCDF file with the selected dimension marked as unlimited.
+}
+\details{
+The function rebuilds the file definition with the requested dimension marked
+as unlimited in every variable where that dimension is present, then copies
+the variable values to the new file.
+}
+\examples{
+\dontrun{
+nc_unlim(
+  filename = "input.nc",
+  unlim = "time",
+  output = "time_unlimited.nc"
+)
+}
+}
+\seealso{
+[nc_rcat()], [write_ncdf()]
 }

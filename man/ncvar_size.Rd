@@ -2,15 +2,35 @@
 % Please edit documentation in R/nctools-auxiliar.R
 \name{ncvar_size}
 \alias{ncvar_size}
-\title{Get the size of the variables in a ncdf object.}
+\title{Get variable sizes from a netCDF file}
 \usage{
 ncvar_size(nc, varid = NULL)
 }
 \arguments{
-\item{nc}{An open connection to a netCDF file as in nc_open(file).}
+\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
 
-\item{varid}{}
+\item{varid}{Variable identifier. This can be a character string giving the
+variable name, or an object of class `ncvar4`. If `NULL`, dimensions are
+returned for all variables in the file.}
+}
+\value{
+A numeric vector giving the dimension sizes of the selected variable.
+  If the file contains a single variable, that variable is used by default.
 }
 \description{
-Get the size of the variables in a ncdf object.
+Returns the dimension sizes of a selected variable in an open netCDF file.
+}
+\details{
+If the file contains more than one variable, `varid` must be supplied.
+}
+\examples{
+\dontrun{
+nc <- ncdf4::nc_open("input.nc")
+on.exit(ncdf4::nc_close(nc))
+
+ncvar_size(nc, varid = "temp")
+}
+}
+\seealso{
+[ncvar_dim()], [ncdim_size()]
 }

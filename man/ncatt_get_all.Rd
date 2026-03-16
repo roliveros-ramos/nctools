@@ -2,19 +2,32 @@
 % Please edit documentation in R/nctools-auxiliar.R
 \name{ncatt_get_all}
 \alias{ncatt_get_all}
-\title{Get all variable's attributes from a ncdf object}
+\title{Get all attributes from variables or dimensions}
 \usage{
 ncatt_get_all(nc, type = c("var", "dim"))
 }
 \arguments{
-\item{nc}{An open connection to a netCDF file as in nc_open(file).}
+\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
 
-\item{type}{A character to choose attributes for variables ("var")
-or dimensions ("dim").}
+\item{type}{Character string indicating whether to return attributes for
+variables (`"var"`) or dimensions (`"dim"`).}
 }
 \value{
-A list with all the atributes.
+A named list of attribute lists.
 }
 \description{
-Get all variable's attributes from a ncdf object
+Returns all attributes associated with variables or dimensions in an open
+netCDF file.
+}
+\examples{
+\dontrun{
+nc <- ncdf4::nc_open("input.nc")
+on.exit(ncdf4::nc_close(nc))
+
+ncatt_get_all(nc, type = "var")
+ncatt_get_all(nc, type = "dim")
+}
+}
+\seealso{
+[ncatt_put_all()], [ncdf4::ncatt_get()]
 }

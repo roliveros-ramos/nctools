@@ -1,17 +1,29 @@
 
 # Main functions for ncdf files -------------------------------------------
 
-
-#' Create a new file with one variable from a ncdf file
+#' Extract a variable to a new netCDF file
 #'
-#' @param filename The filename of the original ncdf file.
-#' @param varid The name of the variable to extract.
-#' @param output The name of the output file.
+#' Creates a new netCDF file containing a single variable copied from an
+#' existing file.
 #'
-#' @return NULL, it creates the new file in the disk.
+#' @param filename Character string giving the path to the input netCDF file.
+#' @param varid Character string giving the name of the variable to extract. If
+#'   missing and the file contains a single variable, that variable is used.
+#' @param output Character string giving the path to the output netCDF file to
+#'   create.
+#'
+#' @return Invisibly returns `output`.
+#' @seealso [write_ncdf()], [nc_subset()], [nc_apply()]
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' nc_extract(
+#'   filename = "input.nc",
+#'   varid = "temp",
+#'   output = "temp_only.nc"
+#' )
+#' }
 nc_extract = function(filename, varid, output) {
   nc = nc_open(filename)
   on.exit(nc_close(nc))
@@ -22,22 +34,42 @@ nc_extract = function(filename, varid, output) {
   return(invisible(output))
 }
 
-#' Renaming variable and dimensions in a netCDF File
+#' Rename variables and dimensions in a netCDF file
 #'
-#' @param filename The filename of the original ncdf file.
-#' @param oldnames A string vector containing the names of the
-#' variable or dimensions in the file that are to be renamed.
-#' @param newnames A string vector containing the new names of
-#' the variables or dimensions.
-#' @param output Optional, the output file with the changes. By default,
-#' it will overwrite the old file.
-#' @param verbose If TRUE, run verbosely.
-#' @param overwrite overwrite output file if already exists?
+#' Renames one or more variables and/or dimensions in an existing netCDF file,
+#' optionally writing the result to a new file.
 #'
-#' @return
+#' @param filename Character string giving the path to the input netCDF file.
+#' @param oldnames Character vector with the current names of variables or
+#'   dimensions to rename.
+#' @param newnames Character vector with the replacement names. Must be in the
+#'   same order and of the same length as `oldnames`.
+#' @param output Optional character string giving the path to the output file.
+#'   If omitted, `overwrite = TRUE` must be used and the original file is
+#'   replaced.
+#' @param verbose Logical. If `TRUE`, print the renaming operations performed.
+#' @param overwrite Logical. If `TRUE`, allow overwriting an existing output
+#'   file. Use this when modifying the original file in place.
+#'
+#' @details
+#' Names in `oldnames` that do not match either a variable or a dimension in the
+#' file are ignored with a warning. If none of the requested names are found,
+#' the function exits without making changes.
+#'
+#' @return Invisibly returns the path to the modified file, or `NULL`
+#'   invisibly if nothing was changed.
+#' @seealso [nc_extract()], [write_ncdf()]
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' nc_rename(
+#'   filename = "input.nc",
+#'   oldnames = c("lon", "lat", "temp"),
+#'   newnames = c("longitude", "latitude", "temperature"),
+#'   output = "renamed.nc"
+#' )
+#' }
 nc_rename = function(filename, oldnames, newnames, output, verbose=FALSE, overwrite=FALSE) {
 
   if(missing(output) & !isTRUE(overwrite))
@@ -107,22 +139,42 @@ nc_rename = function(filename, oldnames, newnames, output, verbose=FALSE, overwr
 }
 
 
-#' Concatenate records of the same variable from different ncdf files
+#' Concatenate records of a variable across netCDF files
 #'
-#' @param filenames A vector with the file names.
-#' @param varid The name of the variable to concatenate.
-#' @param output The name of the output file.
+#' Concatenates the records of the same variable from multiple netCDF files
+#' along the unlimited dimension and writes the result to a new file.
 #'
-#' @return NULL, it creates the new file in the disk.
+#' @param filenames Character vector with the paths to the input netCDF files.
+#' @param varid Character string giving the name of the variable to
+#'   concatenate. If missing, the variable is inferred from the first file when
+#'   possible.
+#' @param output Character string giving the path to the output netCDF file to
+#'   create.
+#'
+#' @details
+#' All files must contain the selected variable and must be compatible in all
+#' non-unlimited dimensions. The unlimited dimension is appended in the order
+#' given by `filenames`.
+#'
+#' @return Invisibly returns `output`.
+#'
+#' @seealso [nc_unlim()], [write_ncdf()]
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' nc_rcat(
+#'   filenames = c("part1.nc", "part2.nc", "part3.nc"),
+#'   varid = "temp",
+#'   output = "combined.nc"
+#' )
+#' }
 nc_rcat = function(filenames, varid, output) {
   # add function validation
   # check for unlim
   for(i in seq_along(filenames)) {
     nc = nc_open(filenames[i])
-    if(!any(ncdim_isUnlim(nc))) stop("Files don't have an unlimited dimension.")
+    if(!any(ncdim_isUnlim(nc))) stop("No file have an unlimited dimension.")
     if(i==1) {
       varid = .checkVarid(varid=varid, nc=nc)
       isUnlim  = ncdim_isUnlim(nc)[ncvar_dim(nc)[[varid]]]
@@ -153,22 +205,52 @@ nc_rcat = function(filenames, varid, output) {
 }
 
 
-#' Subset a ncdf variable
+#' Subset a variable in a netCDF file
 #'
-#' @param filename The name of the ncdf file to subset.
-#' @param varid The name of the variable to subset. If missing and only one variable in the file, that one is used.
-#' @param output The name of the ncdf output file to create.
-#' @param newvarid New name for varid in the output file.
-#' @param compression Compression level for the new variable (forces ncdf v4).
-#' @param force_v4 Logical. Should the resulting file be ncdf v4?
-#' @param ... the dimensions and bounds of values to subset.
-#' @param ignore.case Logical. Ignore case when matching the dimensions?
-#' @param drop Logical. Drop degenered dimensions (i.e. dimensions of length 1)?
+#' Extracts a subset of a variable from a netCDF file using coordinate bounds
+#' supplied for one or more dimensions, and writes the result to a new file.
 #'
-#' @return
+#' @param filename Character string giving the path to the input netCDF file.
+#' @param varid Character string giving the name of the variable to subset. If
+#'   missing and the file contains a single variable, that variable is used.
+#' @param output Character string giving the path to the output netCDF file to
+#'   create.
+#' @param newvarid Optional character string giving the name of the variable in
+#'   the output file. By default, the original variable name is used.
+#' @param compression Optional numeric compression level for the output
+#'   variable. Supplying this typically requires netCDF4 output.
+#' @param force_v4 Logical. If `TRUE`, force creation of a netCDF4 output file.
+#' @param ... Named bounds for dimensions to subset. Each argument name must
+#'   match a dimension name. Values should be numeric vectors of length two
+#'   giving lower and upper bounds. A length-one value is treated as an exact
+#'   coordinate and expanded internally to `c(x, x)`.
+#' @param ignore.case Logical. If `TRUE`, ignore case when matching dimension
+#'   names supplied in `...`.
+#' @param drop Logical. If `TRUE`, drop dimensions of length one in the output.
+#'
+#' @details
+#' Only dimensions named in `...` are subset; all others are kept in full. The
+#' output file contains the subsetted variable, with updated dimension values.
+#' Global attributes from the source file are copied to the output file, and the
+#' global `history` attribute is updated with the function call.
+#'
+#' @return Invisibly returns `output`, or `NULL` invisibly if none of the
+#'   supplied dimension names match the variable dimensions.
+#'
+#' @seealso [nc_extract()], [write_ncdf()]
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' nc_subset(
+#'   filename = "input.nc",
+#'   varid = "temp",
+#'   output = "subset.nc",
+#'   lon = c(-80, -70),
+#'   lat = c(-20, -10),
+#'   depth = c(0, 100)
+#' )
+#' }
 nc_subset = function(filename, varid, output, newvarid, compression,
                      force_v4=FALSE, ..., ignore.case=FALSE, drop=FALSE) {
 
@@ -194,6 +276,7 @@ nc_subset = function(filename, varid, output, newvarid, compression,
     return(invisible())
   }
 
+  bound = NULL # to make CRAN test happy
   .getIndex = function(x, bound, FUN, default=1) {
     FUN = match.fun(FUN)
     # longitude in a torus
@@ -209,7 +292,7 @@ nc_subset = function(filename, varid, output, newvarid, compression,
 
   if(any(count==0)) {
     msg = sprintf("All index are out of bounds: (%s).", paste(bound, collapse=", "))
-
+    warning(msg)
   }
 
   index = setNames(lapply(names(dims),
@@ -274,17 +357,34 @@ nc_subset = function(filename, varid, output, newvarid, compression,
 }
 
 
-#' Make a dimension unlimited
+#' Set a dimension as unlimited
 #'
-#' @param filename
-#' @param unlim Name of the dimension to set as unlimited
-#' @param output Name of the output file. If NULL,
-#' replace the original value
+#' Recreates a netCDF file with the selected dimension marked as unlimited.
 #'
-#' @return
+#' @param filename Character string giving the path to the input netCDF file.
+#' @param unlim Character string giving the name of the dimension to set as
+#'   unlimited.
+#' @param output Optional character string giving the path to the output file.
+#'   If `NULL`, the input file is replaced.
+#'
+#' @details
+#' The function rebuilds the file definition with the requested dimension marked
+#' as unlimited in every variable where that dimension is present, then copies
+#' the variable values to the new file.
+#'
+#' @return Invisibly returns the list of variable definitions used to create the
+#'   new file.
+#' @seealso [nc_rcat()], [write_ncdf()]
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' nc_unlim(
+#'   filename = "input.nc",
+#'   unlim = "time",
+#'   output = "time_unlimited.nc"
+#' )
+#' }
 nc_unlim = function(filename, unlim, output=NULL) {
   # open ncdf connection
   if(is.null(output)) output = filename
@@ -317,33 +417,73 @@ nc_unlim = function(filename, unlim, output=NULL) {
 }
 
 
-#' Apply Functions Over Dimensions of a netCDF variable.
+#' Apply a function over margins of a netCDF variable
 #'
-#' @param filename Name of the existing netCDF file to be opened.
-#' @param varid What variable to read the data from. Can be a string with the
-#' name of the variable or an object of class ncvar4. If set to NA,
-#' the function will determine if there is only one variable in the file and,
-#' if so, read from that, but if there are multiple variables in the file, an error is generated.
-#' @param MARGIN a vector giving the dimensions which the function will be applied over.
-#' It can be a character vector selecting dimension names.
-#' @param FUN the function to be applied
-#' @param ... optional arguments to FUN.
-#' @param output Name of the file to save results.
-#' @param drop Logical. Drop degenered dimensions (i.e. dimensions of length 1)? Not implemented.
-#' @param newdim the values to be assigned a the dimension resulting from the
-#' application of FUN.
-#' @param name new name of the resulting variable. If NULL (by default), the original name is kept.
-#' @param longname long name of the resulting variable.
-#' @param units units of the resulting variable.
-#' @param compression If set to an integer between 1 (least compression) and 9 (most compression), this enables compression for the variable as it is written to the file. Turning compression on forces the created file to be in netcdf version 4 format, which will not be compatible with older software that only reads netcdf version 3 files.
-#' @param verbose Print debugging information.
-#' @param force_v4 If TRUE, then the created output file will always be in netcdf-4 format (which supports more features, but cannot be read by version 3 of the netcdf library). If FALSE, then the file is created in netcdf version 3 format UNLESS the user has requested features that require version 4. Deafult is TRUE.
-#' @param ignore.case If TRUE, ignore case in matching dimension names and MARGIN. Default is FALSE.
+#' Reads a variable from a netCDF file, applies a function over one or more of
+#' its dimensions using [base::apply()], and writes the result to a new netCDF
+#' file.
 #'
-#' @return
+#' @param filename Character string giving the path to the input netCDF file.
+#' @param varid Character string giving the name of the variable to process. If
+#'   missing and the file contains a single variable, that variable is used.
+#' @param MARGIN Integer or character vector specifying the dimensions to retain
+#'   in the output, as in [base::apply()]. Dimension names may be used.
+#' @param FUN Function to apply.
+#' @param ... Additional arguments passed to `FUN`.
+#' @param output Character string giving the path to the output netCDF file to
+#'   create.
+#' @param drop Logical. Currently not implemented.
+#' @param newdim Optional numeric values for the dimension created when `FUN`
+#'   returns a vector of length greater than one.
+#' @param name Optional character string giving the name of the output variable.
+#'   By default, the original variable name is used.
+#' @param longname Optional character string giving the long name of the output
+#'   variable. By default, a name based on `FUN` and the original variable long
+#'   name is generated.
+#' @param units Optional character string giving the units of the output
+#'   variable. By default, the units of the input variable are used.
+#' @param compression Optional numeric compression level for the output
+#'   variable.
+#' @param verbose Logical. Currently unused.
+#' @param force_v4 Logical. Currently unused internally.
+#' @param ignore.case Logical. If `TRUE`, ignore case when matching dimension
+#'   names supplied in `MARGIN`.
+#'
+#' @details
+#' The selected variable is read into memory and processed with [base::apply()].
+#' The output retains the dimensions specified in `MARGIN`. If `FUN` returns a
+#' vector of length greater than one, an additional dimension is appended to the
+#' result; its coordinate values are taken from `newdim` when provided, or
+#' generated automatically otherwise.
+#'
+#' @return Invisibly returns `output`.
+#'
+#' @seealso [nc_subset()], [write_ncdf()], [base::apply()]
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' ## Mean over the time dimension
+#' nc_apply(
+#'   filename = "input.nc",
+#'   varid = "temp",
+#'   MARGIN = c("lon", "lat"),
+#'   FUN = mean,
+#'   na.rm = TRUE,
+#'   output = "temp_mean.nc"
+#' )
+#'
+#' ## Quantiles over the depth dimension
+#' nc_apply(
+#'   filename = "input.nc",
+#'   varid = "temp",
+#'   MARGIN = c("lon", "lat"),
+#'   FUN = quantile,
+#'   probs = c(0.25, 0.5, 0.75),
+#'   newdim = c(25, 50, 75),
+#'   output = "temp_quantiles.nc"
+#' )
+#' }
 nc_apply = function(filename, varid, MARGIN, FUN, ..., output=NULL, drop=FALSE,
                     newdim = NULL, name=NULL, longname=NULL, units=NULL,
                     compression=NA, verbose=FALSE, force_v4=TRUE,
@@ -419,7 +559,7 @@ nc_apply = function(filename, varid, MARGIN, FUN, ..., output=NULL, drop=FALSE,
 
   }
 
-  # drop for tomorrow
+  # TODO: drop for tomorrow
 
   xlongname = sprintf("%s of %s", funName, oldVar$longname)
 
@@ -432,7 +572,7 @@ nc_apply = function(filename, varid, MARGIN, FUN, ..., output=NULL, drop=FALSE,
                      longname = varLongname, prec = oldVar$prec,
                      compression = oldVar$compression)
 
-  ncNew = nc_create(filename=output, vars=newVar)
+  ncNew = nc_create(filename=output, vars=newVar, force_v4=force_v4, verbose=verbose)
   ncvar_put(nc=ncNew, varid=varName, vals=Y)
   nc_close(ncNew)
 
@@ -443,28 +583,49 @@ nc_apply = function(filename, varid, MARGIN, FUN, ..., output=NULL, drop=FALSE,
 
 # Extra tools -------------------------------------------------------------
 
-#' Data output in ncdf format
+#' Write data to a netCDF file
 #'
-#' @param x An array to write to a ncdf file.
-#' @param filename The file to write.
-#' @param varid The name of the variable in the ncdf file.
-#' @param dim A list with the values of the dimensions. Names are taken from the list.
-#' @param longname The longname for the variable to be created.
-#' @param units The units for the variable to be created.
-#' @param prec The precision for the variable to be created.
-#' @param missval Value set for NAs.
-#' @param compression If set to an integer between 1 (least compression) and 9 (most compression), this enables compression for the variable as it is written to the file. Turning compression on forces the created file to be in netcdf version 4 format, which will not be compatible with older software that only reads netcdf version 3 files.
-#' @param chunksizes For compression, the size of the chunks.
-#' @param verbose Do you want to know what's happening?
-#' @param dim.units Units of the dimensions
-#' @param dim.longname Longname of the dimensions.
-#' @param unlim Name of the unlimited dimension.
-#' @param global List of global attributes to be saved.
+#' `write_ncdf()` is an S3 generic for writing R objects to a netCDF file.
+#' Methods are provided for writing a single array-like object
+#' (`write_ncdf.default()`) and a list of arrays (`write_ncdf.list()`).
 #'
-#' @return
-#' @export
+#' @param x Object to write. Supported methods currently accept either a single
+#'   array-like object or a list of array-like objects.
+#' @param filename Character string giving the path to the netCDF file to
+#'   create.
+#' @param ... Additional arguments passed to methods.
+#'
+#' @return Invisibly returns `filename`.
 #'
 #' @examples
+#' \dontrun{
+#' ## Single variable
+#' x <- array(rnorm(20 * 10), dim = c(20, 10))
+#'
+#' write_ncdf(
+#'   x,
+#'   filename = "example_single.nc",
+#'   varid = "temp",
+#'   dim = list(lon = seq_len(20), lat = seq_len(10)),
+#'   longname = "Temperature",
+#'   units = "degree_C"
+#' )
+#'
+#' ## Multiple variables
+#' x1 <- array(rnorm(20 * 10), dim = c(20, 10))
+#' x2 <- array(rnorm(20 * 10), dim = c(20, 10))
+#'
+#' write_ncdf(
+#'   list(temp = x1, salt = x2),
+#'   filename = "example_multi.nc",
+#'   varid = c("temp", "salt"),
+#'   dim = list(lon = seq_len(20), lat = seq_len(10)),
+#'   longname = c("Temperature", "Salinity"),
+#'   units = c("degree_C", "psu")
+#' )
+#' }
+#'
+#' @export
 write_ncdf = function(x, filename, ...) {
   UseMethod("write_ncdf")
 }

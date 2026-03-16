@@ -2,20 +2,35 @@
 % Please edit documentation in R/nctools-main.R
 \name{nc_extract}
 \alias{nc_extract}
-\title{Create a new file with one variable from a ncdf file}
+\title{Extract a variable to a new netCDF file}
 \usage{
 nc_extract(filename, varid, output)
 }
 \arguments{
-\item{filename}{The filename of the original ncdf file.}
+\item{filename}{Character string giving the path to the input netCDF file.}
 
-\item{varid}{The name of the variable to extract.}
+\item{varid}{Character string giving the name of the variable to extract. If
+missing and the file contains a single variable, that variable is used.}
 
-\item{output}{The name of the output file.}
+\item{output}{Character string giving the path to the output netCDF file to
+create.}
 }
 \value{
-NULL, it creates the new file in the disk.
+Invisibly returns `output`.
 }
 \description{
-Create a new file with one variable from a ncdf file
+Creates a new netCDF file containing a single variable copied from an
+existing file.
+}
+\examples{
+\dontrun{
+nc_extract(
+  filename = "input.nc",
+  varid = "temp",
+  output = "temp_only.nc"
+)
+}
+}
+\seealso{
+[write_ncdf()], [nc_subset()], [nc_apply()]
 }

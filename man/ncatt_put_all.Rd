@@ -2,7 +2,7 @@
 % Please edit documentation in R/nctools-auxiliar.R
 \name{ncatt_put_all}
 \alias{ncatt_put_all}
-\title{Put several attributes to a ncdf object}
+\title{Write multiple attributes to a netCDF variable or file}
 \usage{
 ncatt_put_all(
   nc,
@@ -15,25 +15,58 @@ ncatt_put_all(
 )
 }
 \arguments{
-\item{nc}{An open connection to a netCDF file as in nc_open(file).}
+\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
 
-\item{varid}{The variable whose attribute is to be written. Can be a
-character string with the variable's name, an object of class ncvar4,
-or an id contained in the "id" field of a ncvar object. As a special case,
-if varid==0, then a global attribute is written instead of a variable's
-attribute.}
+\item{varid}{Variable identifier. This can be a character string giving the
+variable name, an object of class `ncvar4`, or an integer id. As a special
+case, `varid = 0` writes global attributes.}
 
-\item{attname}{The names of the attributes.}
+\item{attname}{Names of the attributes to write. Alternatively, this may be a
+named vector or list of attribute values when `attval` is omitted.}
 
-\item{attval}{The values of the attributes.}
+\item{attval}{Values of the attributes to write. If omitted, `attname` must
+be a named vector or list whose names are used as attribute names.}
 
-\item{prec}{Precision to write the attribute.}
+\item{prec}{Optional precision used when writing the attributes. Passed to
+[ncdf4::ncatt_put()].}
 
-\item{verbose}{Can be set to TRUE if additional information is desired while
-the attribute is being created.}
+\item{verbose}{Logical. If `TRUE`, print additional information while writing
+attributes.}
 
-\item{definemode}{See 'definemode' in ncatt_put for details.}
+\item{definemode}{Logical. Passed to [ncdf4::ncatt_put()]. See that function
+for details.}
+}
+\value{
+`NULL`, invisibly.
 }
 \description{
-Put several attributes to a ncdf object
+Writes several attributes to a variable or to the global file metadata of an
+open netCDF file.
+}
+\details{
+Attributes can be supplied either as parallel `attname` and `attval`
+arguments, or as a single named vector or list. Missing attribute names are
+not allowed.
+}
+\examples{
+\dontrun{
+nc <- ncdf4::nc_open("input.nc", write = TRUE)
+on.exit(ncdf4::nc_close(nc))
+
+ncatt_put_all(
+  nc,
+  varid = "temp",
+  attname = c("long_name", "units"),
+  attval = list("Temperature", "degree_C")
+)
+
+ncatt_put_all(
+  nc,
+  varid = 0,
+  attval = list(title = "Example file", source = "nctools")
+)
+}
+}
+\seealso{
+[ncatt_get_all()], [ncdf4::ncatt_put()]
 }

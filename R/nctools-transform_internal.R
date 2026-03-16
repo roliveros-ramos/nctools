@@ -1,4 +1,63 @@
 
+#' Locate the depth where a variable reaches a given value
+#'
+#' Finds the position along one dimension of a netCDF variable where the
+#' variable reaches a target value, and writes the result to a new netCDF file.
+#' In the typical use case, this is used to estimate the depth at which a
+#' variable equals `loc`, using linear interpolation between adjacent depth
+#' levels when needed.
+#'
+#' @param filename Character string. Path to the input netCDF file.
+#' @param varid Character string. Name of the variable to analyse. If missing
+#'   and the file contains only one variable, that variable is used.
+#' @param MARGIN Integer or character string of length one. Dimension along
+#'   which the target value is searched. This can be either the dimension index
+#'   or its name (for example `"depth"`).
+#' @param loc Numeric. Target value to locate in the variable.
+#' @param output Character string. Path to the output netCDF file to create.
+#' @param drop Logical. Should degenerate dimensions be dropped? Currently not
+#'   used internally.
+#' @param newdim Reserved for future use. Currently not used internally.
+#' @param name Character string. Name of the output variable. By default, the
+#'   name of the searched dimension is used.
+#' @param longname Character string. Long name for the output variable. By
+#'   default, a descriptive name is generated automatically.
+#' @param units Character string. Units for the output variable. Currently not
+#'   used internally; by default, the units of the searched dimension are used.
+#' @param compression Numeric. Compression level for the output variable. If not
+#'   `NA`, compression is applied and netCDF4 output is required.
+#' @param verbose Logical. Should extra information be printed? Currently not
+#'   used internally.
+#' @param force_v4 Logical. Should the output file be forced to netCDF4?
+#'   Currently not used internally.
+#' @param ignore.case Logical. Ignore case when matching the dimension name in
+#'   `MARGIN`?
+#'
+#' @details
+#' The function searches for the first sign change in
+#' `variable - loc` along the selected dimension, then estimates the exact
+#' position by linear interpolation between the two surrounding grid points.
+#'
+#' The output file contains a new variable with the searched dimension removed.
+#' For example, if `MARGIN` corresponds to depth, the output is a field giving
+#' the estimated depth at which `varid` reaches `loc` for each remaining
+#' combination of dimensions.
+#'
+#' @return
+#' Invisibly returns the path to the created output file.
+#'
+#' @examples
+#' \dontrun{
+#' # Estimate the depth of the 20 degree isotherm
+#' nc_loc(
+#'   filename = "temperature.nc",
+#'   varid = "temp",
+#'   MARGIN = "depth",
+#'   loc = 20,
+#'   output = "depth_20C.nc"
+#' )
+#' }
+#'
 #' @export
 nc_loc = function(filename, varid, MARGIN, loc, output=NULL, drop=TRUE,
                   newdim = NULL, name=NULL, longname=NULL, units=NULL,
@@ -75,7 +134,7 @@ nc_loc = function(filename, varid, MARGIN, loc, output=NULL, drop=TRUE,
                      longname = varLongname, prec = oldVar$prec,
                      compression = oldVar$compression)
 
-  ncNew = nc_create(filename=output, vars=newVar)
+  ncNew = nc_create(filename=output, vars=newVar, force_v4=force_v4)
   ncvar_put(ncNew, varName, Dx)
   nc_close(ncNew)
 

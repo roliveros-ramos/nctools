@@ -2,20 +2,41 @@
 % Please edit documentation in R/nctools-main.R
 \name{nc_rcat}
 \alias{nc_rcat}
-\title{Concatenate records of the same variable from different ncdf files}
+\title{Concatenate records of a variable across netCDF files}
 \usage{
 nc_rcat(filenames, varid, output)
 }
 \arguments{
-\item{filenames}{A vector with the file names.}
+\item{filenames}{Character vector with the paths to the input netCDF files.}
 
-\item{varid}{The name of the variable to concatenate.}
+\item{varid}{Character string giving the name of the variable to
+concatenate. If missing, the variable is inferred from the first file when
+possible.}
 
-\item{output}{The name of the output file.}
+\item{output}{Character string giving the path to the output netCDF file to
+create.}
 }
 \value{
-NULL, it creates the new file in the disk.
+Invisibly returns `output`.
 }
 \description{
-Concatenate records of the same variable from different ncdf files
+Concatenates the records of the same variable from multiple netCDF files
+along the unlimited dimension and writes the result to a new file.
+}
+\details{
+All files must contain the selected variable and must be compatible in all
+non-unlimited dimensions. The unlimited dimension is appended in the order
+given by `filenames`.
+}
+\examples{
+\dontrun{
+nc_rcat(
+  filenames = c("part1.nc", "part2.nc", "part3.nc"),
+  varid = "temp",
+  output = "combined.nc"
+)
+}
+}
+\seealso{
+[nc_unlim()], [write_ncdf()]
 }

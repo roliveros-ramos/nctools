@@ -2,15 +2,34 @@
 % Please edit documentation in R/nctools-auxiliar.R
 \name{ncvar_compression}
 \alias{ncvar_compression}
-\title{Get the compression of the variables in a ncdf object.}
+\title{Get variable compression settings from a netCDF file}
 \usage{
 ncvar_compression(nc, varid = NA)
 }
 \arguments{
-\item{nc}{An open connection to a netCDF file as in nc_open(file).}
+\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
 
-\item{varid}{Either the name of the variable or an ncvar object.}
+\item{varid}{Variable identifier. This can be a character string giving the
+variable name, or an object of class `ncvar4`. If `NA`, compression
+settings are returned for all variables in the file.}
+}
+\value{
+If `varid` is `NA`, a named vector or list with the compression setting of
+each variable. Otherwise, the compression setting of the selected variable.
 }
 \description{
-Get the compression of the variables in a ncdf object.
+Returns the compression setting of one variable, or of all variables, in an
+open netCDF file.
+}
+\examples{
+\dontrun{
+nc <- ncdf4::nc_open("input.nc")
+on.exit(ncdf4::nc_close(nc))
+
+ncvar_compression(nc)
+ncvar_compression(nc, varid = "temp")
+}
+}
+\seealso{
+[ncvar_change_compression()]
 }

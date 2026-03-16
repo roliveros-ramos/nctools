@@ -1,5 +1,30 @@
+#' Internal netCDF helpers
+#'
+#' Developer-facing helper functions used internally by `nctools` for variable
+#' validation, dimension matching, and renaming variables or dimensions in
+#' netCDF files.
+#'
+#' These functions are not part of the public API and may change without notice.
+#'
+#' @name nctools-internal
+#' @keywords internal
+NULL
 
 
+#' @rdname nctools-internal
+#'
+#' @description
+#' `.replaceInDim()` replaces one component of a named dimension inside a
+#' variable definition.
+#'
+#' @param x A variable definition object, typically an object of class
+#'   `ncvar4`.
+#' @param dim Character string giving the dimension name to modify.
+#' @param id Character string giving the component of the dimension object to
+#'   replace, for example `"name"`.
+#' @param value Replacement value for the selected component.
+#'
+#' @return A modified variable definition object.
 .replaceInDim = function(x, dim, id, value) {
   .repInDim = function(x, dim, id, value) {
     if(x$name != dim) return(x)
@@ -11,6 +36,24 @@
   return(x)
 }
 
+#' @rdname nctools-internal
+#'
+#' @description
+#' `.nc_renameDim()` rewrites a netCDF file with one or more dimensions
+#' renamed.
+#'
+#' @param filename Character string giving the path to the input netCDF file.
+#' @param oldname Character vector giving the existing dimension names.
+#' @param newname Character vector giving the replacement dimension names. Must
+#'   have the same length and order as `oldname`.
+#' @param output Character string giving the path to the output netCDF file.
+#' @param verbose Logical. If `TRUE`, report progress while rewriting the file.
+#'
+#' @details
+#' The file is rebuilt from the variable definitions in `filename`, with the
+#' requested dimensions renamed before writing the output file.
+#'
+#' @return Invisibly returns `output`.
 .nc_renameDim = function(filename, oldname, newname, output, verbose=FALSE) {
 
   tmp = paste(output, "temp", sep=".")
@@ -66,6 +109,18 @@
 
 }
 
+#' @rdname nctools-internal
+#'
+#' @description
+#' `.nc_renameVar()` renames one or more variables in a netCDF file.
+#'
+#' @inheritParams .nc_renameDim
+#'
+#' @details
+#' If `output` differs from `filename`, the input file is first copied to
+#' `output`, and the renaming is applied there.
+#'
+#' @return Invisibly returns `output`.
 .nc_renameVar = function(filename, oldname, newname, output, verbose=FALSE) {
 
   if(length(oldname)!=length(newname))
@@ -92,19 +147,33 @@
 
 }
 
+#' Internal helper to extract variable compression
+#' @noRd
 .getCompression = function(x) return(x$compression)
 
+#' Internal helper to set variable compression
+#' @noRd
 .setCompression = function(x, compression) {
   x$compression = compression
   x$chunksizes = NA
   return(x)
 }
 
-
-
 # Argument checking -------------------------------------------------------
 
 
+#' @rdname nctools-internal
+#'
+#' @description
+#' `.checkVarid()` validates a variable identifier against an open netCDF file
+#' and resolves the default variable when the file contains a single variable.
+#'
+#' @param varid Variable identifier supplied by the user. This can be a
+#'   character string, an object of class `ncvar4`, or `NA`/missing when the
+#'   file contains a single variable.
+#' @param nc An open netCDF connection created with [ncdf4::nc_open()].
+#'
+#' @return A validated variable name as a character string.
 .checkVarid = function(varid, nc) {
 
   if(missing(varid)) varid = NA
@@ -129,13 +198,26 @@
 
 }
 
-# match and array with a dimsize vector.
+#' @rdname nctools-internal
+#'
+#' @description
+#' `.getDimensions()` matches the dimensions of an array to a target netCDF
+#' dimension-size vector.
+#'
+#' @param x Array-like object.
+#' @param dimsize Numeric vector giving the target dimension sizes.
+#'
+#' @details
+#' Matching is based on dimension lengths. When more than one candidate match
+#' exists, the first match is used.
+#'
+#' @return An integer vector giving the matched dimension positions.
 .getDimensions = function(x, dimsize) {
   mydim = dim(x)
   out = NA_real_*numeric(length(mydim))
   for(i in seq_along(mydim)) {
     ind = which(dimsize %in% mydim[i])
-    if(length(ind)<1) stop("Array incompatible with dimension units.")
+    if(length(ind)<1) stop("Array incompatible with dimension sizes.")
     if(length(ind)>1) ind = min(ind)
     out[i] = ind
     dimsize[seq_len(ind)] = -1

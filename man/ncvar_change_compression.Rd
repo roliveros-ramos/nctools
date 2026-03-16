@@ -2,18 +2,34 @@
 % Please edit documentation in R/nctools-auxiliar.R
 \name{ncvar_change_compression}
 \alias{ncvar_change_compression}
-\title{Change the compression of the variables in a ncdf object.}
+\title{Change variable compression settings in a netCDF object}
 \usage{
 ncvar_change_compression(nc, varid = NA, compression)
 }
 \arguments{
-\item{nc}{An open connection to a netCDF file as in nc_open(file, write=TRUE).}
+\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
 
-\item{varid}{Either the name of the variable or an ncvar object indicating whose compression value will be changed.
-If NA, all the variables will be changed to the new compression.}
+\item{varid}{Variable identifier. This can be a character string giving the
+variable name, or an object of class `ncvar4`. If `NA`, the compression
+setting is changed for all variables in the file.}
 
-\item{compression}{The new compression value.}
+\item{compression}{Numeric compression level to assign.}
+}
+\value{
+The modified netCDF object.
 }
 \description{
-Change the compression of the variables in a ncdf object.
+Modifies the compression setting of one or more variables in an open netCDF
+object.
+}
+\examples{
+\dontrun{
+nc <- ncdf4::nc_open("input.nc")
+on.exit(ncdf4::nc_close(nc))
+
+nc <- ncvar_change_compression(nc, varid = "temp", compression = 4)
+}
+}
+\seealso{
+[ncvar_compression()]
 }

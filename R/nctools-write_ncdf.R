@@ -1,7 +1,48 @@
+#' @rdname write_ncdf
+#'
+#' @param varid Character string giving the name of the variable to create in
+#'   the output file.
+#' @param dim A named or unnamed list defining the coordinates of each
+#'   dimension. Each element contains the coordinate values for one dimension.
+#'   If omitted, dimensions are generated as `seq_len()` for each dimension of
+#'   `x`.
+#' @param longname Character string giving the long name of the output variable.
+#'   Defaults to `""`.
+#' @param units Character string giving the units of the output variable.
+#'   Defaults to `""`.
+#' @param prec Character string giving the storage precision passed to
+#'   [ncdf4::ncvar_def()], for example `"short"`, `"integer"`, `"float"` or
+#'   `"double"`.
+#' @param missval Missing value used in the netCDF variable definition.
+#' @param compression Numeric compression level passed to
+#'   [ncdf4::ncvar_def()]. Compression usually requires netCDF4 output.
+#' @param chunksizes Optional chunk sizes for compressed variables.
+#' @param verbose Logical. Should `ncdf4` report progress while creating and
+#'   filling the file?
+#' @param dim.names Character vector with names for the dimensions when `dim` is
+#'   unnamed. Ignored when `dim` already has names.
+#' @param dim.units Character vector giving the units of the dimensions. If
+#'   omitted, empty strings are used.
+#' @param dim.longname Character vector giving the long names of the dimensions.
+#'   If omitted, empty strings are used.
+#' @param unlim Character string naming the unlimited dimension. Use `FALSE`
+#'   for no unlimited dimension.
+#' @param global Named list of global attributes to add to the output file.
+#'   A `history` attribute documenting the function call is added automatically.
+#' @param force_v4 Logical. Should the output file be forced to netCDF4 format?
+#'
+#' @details
+#' `write_ncdf.default()` writes a single object `x` as one variable in a new
+#' netCDF file. The dimensions of the variable are defined by `dim`.
+#'
+#' If `dim` is unnamed, dimension names are taken from `dim.names`, or generated
+#' automatically as `"dim1"`, `"dim2"`, and so on. Dimension units and long
+#' names can be supplied through `dim.units` and `dim.longname`.
+#'
 #' @export
 write_ncdf.default = function(x, filename, varid, dim, longname, units, prec="float",
                               missval=NA, compression=9, chunksizes=NA, verbose=FALSE,
-                              dim.units, dim.longname, unlim=FALSE, global=list(),
+                              dim.names, dim.units, dim.longname, unlim=FALSE, global=list(),
                               force_v4=FALSE, ...) {
 
   if(!is.list(global)) stop("'global' must be a list")
@@ -11,8 +52,13 @@ write_ncdf.default = function(x, filename, varid, dim, longname, units, prec="fl
   if(length(dim)!=length(dim(x)))
     stop("dim argument does not match data dimension.")
 
-  if(is.null(names(dim)))
-    dim = setNames(dim, paste("dim", seq_along(dim(x)), sep=""))
+  if(is.null(names(dim))) {
+    if(missing(dim.names)) {
+      dim = setNames(dim, paste("dim", seq_along(dim), sep=""))
+    } else {
+      dim = setNames(dim, dim.names)
+    }
+  }
 
   if(missing(longname)) longname = ""
   if(missing(units))    units    = ""
@@ -54,10 +100,25 @@ write_ncdf.default = function(x, filename, varid, dim, longname, units, prec="fl
 
 }
 
+#' @rdname write_ncdf
+#' @inheritParams write_ncdf.default
+#'
+#' @details
+#' `write_ncdf.list()` writes each element of `x` as a separate variable in the
+#' same netCDF file.
+#'
+#' If `varid` is omitted, variable names are taken from `names(x)`. Arguments
+#' such as `longname`, `units`, and `prec` can be supplied either as length-one
+#' values, to be recycled to all variables, or as one value per variable.
+#'
+#' The object `dim` defines the full set of dimensions available in the file.
+#' Individual variables may use all or a subset of those dimensions, provided
+#' their sizes are consistent with the declared dimension lengths.
+#'
 #' @export
 write_ncdf.list = function(x, filename, varid, dim, longname, units, prec="float",
                            missval=NA, compression=9, chunksizes=NA, verbose=FALSE,
-                           dim.units, dim.longname, unlim=FALSE, global=list(),
+                           dim.names, dim.units, dim.longname, unlim=FALSE, global=list(),
                            force_v4=FALSE, ...) {
 
   if(!is.list(global)) stop("'global' must be a list")
@@ -68,7 +129,7 @@ write_ncdf.list = function(x, filename, varid, dim, longname, units, prec="float
   if(length(varid)!=nvar) stop("One 'varid' per variable must be provided")
 
   if(missing(dim)) {
-    sdim = sapply(x, FUN = function(x) length(dim(x)))
+    sdim = sapply(x, FUN = function(x) length(base::dim(x)))
     ind  = which.max(sdim)
     dim = lapply(base::dim(x[[ind]]), seq_len)
   }
@@ -82,8 +143,14 @@ write_ncdf.list = function(x, filename, varid, dim, longname, units, prec="float
   # ind = sapply(ind, FUN = identical, y=ind[[1]])
   # if(!all(ind)) stop("All arrays to be added to the ncdf file must have the same dimension.")
 
-  if(is.null(names(dim)))
-    dim = setNames(dim, paste("dim", seq_along(dim(x[[1]])), sep=""))
+  if(is.null(names(dim))) {
+    if(missing(dim.names)) {
+      dim = setNames(dim, paste("dim", seq_along(dim), sep=""))
+    } else {
+      dim = setNames(dim, dim.names)
+    }
+  }
+
 
   if(missing(longname)) longname = rep("", nvar)
   if(length(longname)==1) longname = rep(longname, nvar)

@@ -2,13 +2,33 @@
 % Please edit documentation in R/nctools_spatial.R
 \name{findPrimeMeridian}
 \alias{findPrimeMeridian}
-\title{Find the Prime Meridian}
+\title{Identify the prime meridian convention from longitude values}
 \usage{
 findPrimeMeridian(x)
 }
 \arguments{
-\item{x}{numeric vector of longitude values.}
+\item{x}{Numeric vector of longitude values.}
+}
+\value{
+A character string, either `"center"` or `"left"`, or `NULL` if the
+  convention cannot be determined.
 }
 \description{
-Find the Prime Meridian
+Infers whether a longitude vector is expressed using the `[-180, 180]`
+convention or the `[0, 360]` convention.
+}
+\details{
+The function returns `"center"` if any longitude is negative, and `"left"`
+if any longitude is greater than `180`. If neither condition is met, the
+convention cannot be determined unambiguously and the function returns
+`NULL` with a warning.
+}
+\examples{
+\dontrun{
+findPrimeMeridian(c(-10, 0, 20))
+findPrimeMeridian(c(10, 180, 350))
+}
+}
+\seealso{
+[checkLongitude()]
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/nctools-extras.R
 \name{nc_changePrimeMeridian}
 \alias{nc_changePrimeMeridian}
-\title{Change the Prime Meridian of a variable in a ncdf file.}
+\title{Change the prime meridian of a variable in a netCDF file}
 \usage{
 nc_changePrimeMeridian(
   filename,
@@ -18,25 +18,78 @@ nc_changePrimeMeridian(
 )
 }
 \arguments{
-\item{filename}{The filename of the original ncdf file.}
+\item{filename}{Character string giving the path to the input netCDF file.}
 
-\item{output}{The name of the output file.}
+\item{output}{Optional character string giving the path to the output
+netCDF file. If omitted, `overwrite = TRUE` must be used and the input file
+is replaced.}
 
-\item{varid}{The name of the variable to extract.}
+\item{varid}{Variable identifier. This can be a character string giving the
+variable name. If omitted and the file contains a single variable, that
+variable is used.}
 
-\item{primeMeridian}{position of the Prime Meridian. Use "center" for [-180,180]
-range values and "left" for [0,360] range (Pacific centered).}
+\item{MARGIN}{Integer or character string of length one specifying the
+longitude dimension. This can be either the dimension index or its name.}
 
-\item{verbose}{If TRUE, run verbosely.}
+\item{primeMeridian}{Character string specifying the target longitude
+convention. Use `"center"` for longitudes in the `[-180, 180]` range and
+`"left"` for longitudes in the `[0, 360]` range.}
 
-\item{overwrite}{overwrite output file if already exists?}
+\item{verbose}{Logical. If `TRUE`, report progress while processing the
+variable.}
 
-\item{compression}{If set to an integer between 1 (least compression) and 9 (most compression), this enables compression for the variable as it is written to the file. Turning compression on forces the created file to be in netcdf version 4 format, which will not be compatible with older software that only reads netcdf version 3 files.}
+\item{overwrite}{Logical. If `TRUE`, allow overwriting an existing output
+file, including the input file itself.}
 
-\item{mem.limit}{Maximum RAM size to be used per iteration.
-If the total size of the variable exceeds this value, the reshape is done iteratively.
-By default is 3072MB (3GB).}
+\item{compression}{Optional numeric compression level for the output
+variable. Supplying this typically requires netCDF4 output.}
+
+\item{mem.limit}{Numeric. Approximate memory limit, in MiB, used when
+processing large variables. If the variable exceeds this limit, it is
+reordered iteratively in chunks.}
+
+\item{ignore.case}{Logical. If `TRUE`, ignore case when matching `varid` or
+a character `MARGIN`.}
+}
+\value{
+Invisibly returns `output`.
 }
 \description{
-Change the Prime Meridian of a variable in a ncdf file.
+Reorders the longitude dimension of a variable so that longitudes follow
+either the `[-180, 180]` convention or the `[0, 360]` convention, and writes
+the result to a netCDF file.
+}
+\details{
+The function updates the longitude coordinate values of the selected
+variable, reorders the data accordingly, and writes the result to a new
+netCDF file. If the variable is small enough, the full array is processed in
+memory. Otherwise, the variable is processed iteratively in chunks to reduce
+memory use.
+
+If the longitude values already follow the requested convention, the function
+returns with a warning. When `output` differs from `filename`, the input file
+is copied to `output` unchanged.
+}
+\examples{
+\dontrun{
+nc_changePrimeMeridian(
+  filename = "input.nc",
+  output = "output.nc",
+  varid = "temp",
+  MARGIN = "lon",
+  primeMeridian = "center"
+)
+
+nc_changePrimeMeridian(
+  filename = "input.nc",
+  output = "output_pacific.nc",
+  varid = "temp",
+  MARGIN = 1,
+  primeMeridian = "left",
+  compression = 4
+)
+}
+}
+\seealso{
+[nc_subset()], [nc_apply()]
 }

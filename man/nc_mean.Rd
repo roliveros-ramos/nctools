@@ -2,7 +2,9 @@
 % Please edit documentation in R/nctool-statistics.R
 \name{nc_mean}
 \alias{nc_mean}
-\title{Calculate sample mean over the dimensions of a ncdf variable}
+\alias{nc_min}
+\alias{nc_max}
+\title{Compute summary statistics of a netCDF variable}
 \usage{
 nc_mean(
   filename,
@@ -17,34 +19,106 @@ nc_mean(
   force_v4 = TRUE,
   ignore.case = FALSE
 )
+
+nc_min(
+  filename,
+  varid,
+  MARGIN = c(1, 2),
+  na.rm = TRUE,
+  output = NULL,
+  drop = TRUE,
+  compression = NA,
+  verbose = FALSE,
+  force_v4 = TRUE,
+  ignore.case = FALSE
+)
+
+nc_max(
+  filename,
+  varid,
+  MARGIN = c(1, 2),
+  na.rm = TRUE,
+  output = NULL,
+  drop = TRUE,
+  compression = NA,
+  verbose = FALSE,
+  force_v4 = TRUE,
+  ignore.case = FALSE
+)
 }
 \arguments{
-\item{filename}{Name of the existing netCDF file to be opened.}
+\item{filename}{Character string giving the path to the input netCDF file.}
 
-\item{varid}{What variable to read the data from. Can be a string with the
-name of the variable or an object of class ncvar4. If set to NA,
-the function will determine if there is only one variable in the file and,
-if so, read from that, but if there are multiple variables in the file, an error is generated.}
+\item{varid}{Character string giving the name of the variable to process. If
+missing and the file contains a single variable, that variable is used.}
 
-\item{MARGIN}{a vector giving the dimensions which the function will be applied over.
-It can be a character vector selecting dimension names. By default, the first two dimensions are taken.}
+\item{MARGIN}{Integer or character vector specifying the dimensions to retain
+in the output, as in [base::apply()]. Dimension names may be used.}
 
-\item{na.rm}{logical; if TRUE, any NA and NaN's are removed before the quantiles are computed.}
+\item{na.rm}{Logical. If `TRUE`, missing values are removed before computing
+the statistic.}
 
-\item{trim}{the fraction (0 to 0.5) of observations to be trimmed from each end of x before the mean is computed. Values of trim outside that range are taken as the nearest endpoint.}
+\item{trim}{Numeric scalar giving the fraction of observations to be trimmed
+from each end before computing the mean. Passed to [base::mean()]. Used
+only by `nc_mean()`.}
 
-\item{output}{Name of the file to save results.}
+\item{output}{Character string giving the path to the output netCDF file to
+create.}
 
-\item{drop}{Logical. Drop degenered dimensions (i.e. dimensions of length 1)? Not implemented.}
+\item{drop}{Logical. Currently not implemented.}
 
-\item{compression}{If set to an integer between 1 (least compression) and 9 (most compression), this enables compression for the variable as it is written to the file. Turning compression on forces the created file to be in netcdf version 4 format, which will not be compatible with older software that only reads netcdf version 3 files.}
+\item{compression}{Optional numeric compression level for the output
+variable.}
 
-\item{verbose}{Print debugging information.}
+\item{verbose}{Logical. Currently unused.}
 
-\item{force_v4}{If TRUE, then the created output file will always be in netcdf-4 format (which supports more features, but cannot be read by version 3 of the netcdf library). If FALSE, then the file is created in netcdf version 3 format UNLESS the user has requested features that require version 4. Deafult is TRUE.}
+\item{force_v4}{Logical. Currently unused internally.}
 
-\item{ignore.case}{If TRUE, ignore case in matching dimension names and MARGIN. Default is FALSE.}
+\item{ignore.case}{Logical. If `TRUE`, ignore case when matching dimension
+names supplied in `MARGIN`.}
+}
+\value{
+Invisibly returns `output`.
 }
 \description{
-Calculate sample mean over the dimensions of a ncdf variable
+Applies a summary function to a variable in a netCDF file over the
+dimensions not listed in `MARGIN`, and writes the result to a new netCDF
+file.
+}
+\details{
+`nc_mean()` applies [base::mean()], `nc_min()` applies [base::min()], and
+`nc_max()` applies [base::max()].
+
+
+The output retains the dimensions specified in `MARGIN`.
+}
+\examples{
+\dontrun{
+nc_mean(
+  filename = "input.nc",
+  varid = "temp",
+  MARGIN = c("lon", "lat"),
+  na.rm = TRUE,
+  output = "temp_mean.nc"
+)
+
+nc_min(
+  filename = "input.nc",
+  varid = "temp",
+  MARGIN = c("lon", "lat"),
+  na.rm = TRUE,
+  output = "temp_min.nc"
+)
+
+nc_max(
+  filename = "input.nc",
+  varid = "temp",
+  MARGIN = c("lon", "lat"),
+  na.rm = TRUE,
+  output = "temp_max.nc"
+)
+}
+}
+\seealso{
+[nc_apply()], [base::mean()], [base::min()], [base::max()]
 }

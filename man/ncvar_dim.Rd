@@ -2,20 +2,41 @@
 % Please edit documentation in R/nctools-auxiliar.R
 \name{ncvar_dim}
 \alias{ncvar_dim}
-\title{Get dimension names for each variable in a ncdf file}
+\title{Get variable dimensions from a netCDF file}
 \usage{
 ncvar_dim(nc, varid = NULL, value = FALSE)
 }
 \arguments{
-\item{nc}{An open connection to a netCDF file as in nc_open(file).}
+\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
 
-\item{varid}{What variable to read the data from. Can be a string with the
-name of the variable or an object of class ncvar4. If set to NA,
-the function will determine if there is only one variable in the file and,
-if so, read from that, but if there are multiple variables in the file, an error is generated.}
+\item{varid}{Variable identifier. This can be a character string giving the
+variable name, or an object of class `ncvar4`. If `NULL`, dimensions are
+returned for all variables in the file.}
 
-\item{value}{If TRUE, return a list with the value of the dimensions, not only the names of them.}
+\item{value}{Logical. If `TRUE`, return the coordinate values of each
+dimension instead of only the dimension names.}
+}
+\value{
+If `varid` is `NULL`, a named list with one element per variable. If `varid`
+is supplied, the dimensions of the selected variable only. When
+`value = FALSE`, dimensions are returned as character vectors of dimension
+names. When `value = TRUE`, dimensions are returned as named lists of
+coordinate values.
 }
 \description{
-Get dimension names for each variable in a ncdf file
+Returns the dimensions associated with one variable, or with all variables in
+an open netCDF file.
+}
+\examples{
+\dontrun{
+nc <- ncdf4::nc_open("input.nc")
+on.exit(ncdf4::nc_close(nc))
+
+ncvar_dim(nc)
+ncvar_dim(nc, varid = "temp")
+ncvar_dim(nc, varid = "temp", value = TRUE)
+}
+}
+\seealso{
+[ncvar_size()], [ncdim_size()], [ncdf4::nc_open()]
 }

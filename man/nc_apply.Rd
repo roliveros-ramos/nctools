@@ -2,7 +2,7 @@
 % Please edit documentation in R/nctools-main.R
 \name{nc_apply}
 \alias{nc_apply}
-\title{Apply Functions Over Dimensions of a netCDF variable.}
+\title{Apply a function over margins of a netCDF variable}
 \usage{
 nc_apply(
   filename,
@@ -23,41 +23,85 @@ nc_apply(
 )
 }
 \arguments{
-\item{filename}{Name of the existing netCDF file to be opened.}
+\item{filename}{Character string giving the path to the input netCDF file.}
 
-\item{varid}{What variable to read the data from. Can be a string with the
-name of the variable or an object of class ncvar4. If set to NA,
-the function will determine if there is only one variable in the file and,
-if so, read from that, but if there are multiple variables in the file, an error is generated.}
+\item{varid}{Character string giving the name of the variable to process. If
+missing and the file contains a single variable, that variable is used.}
 
-\item{MARGIN}{a vector giving the dimensions which the function will be applied over.
-It can be a character vector selecting dimension names.}
+\item{MARGIN}{Integer or character vector specifying the dimensions to retain
+in the output, as in [base::apply()]. Dimension names may be used.}
 
-\item{FUN}{the function to be applied}
+\item{FUN}{Function to apply.}
 
-\item{...}{optional arguments to FUN.}
+\item{...}{Additional arguments passed to `FUN`.}
 
-\item{output}{Name of the file to save results.}
+\item{output}{Character string giving the path to the output netCDF file to
+create.}
 
-\item{drop}{Logical. Drop degenered dimensions (i.e. dimensions of length 1)? Not implemented.}
+\item{drop}{Logical. Currently not implemented.}
 
-\item{newdim}{the values to be assigned a the dimension resulting from the
-application of FUN.}
+\item{newdim}{Optional numeric values for the dimension created when `FUN`
+returns a vector of length greater than one.}
 
-\item{name}{new name of the resulting variable. If NULL (by default), the original name is kept.}
+\item{name}{Optional character string giving the name of the output variable.
+By default, the original variable name is used.}
 
-\item{longname}{long name of the resulting variable.}
+\item{longname}{Optional character string giving the long name of the output
+variable. By default, a name based on `FUN` and the original variable long
+name is generated.}
 
-\item{units}{units of the resulting variable.}
+\item{units}{Optional character string giving the units of the output
+variable. By default, the units of the input variable are used.}
 
-\item{compression}{If set to an integer between 1 (least compression) and 9 (most compression), this enables compression for the variable as it is written to the file. Turning compression on forces the created file to be in netcdf version 4 format, which will not be compatible with older software that only reads netcdf version 3 files.}
+\item{compression}{Optional numeric compression level for the output
+variable.}
 
-\item{verbose}{Print debugging information.}
+\item{verbose}{Logical. Currently unused.}
 
-\item{force_v4}{If TRUE, then the created output file will always be in netcdf-4 format (which supports more features, but cannot be read by version 3 of the netcdf library). If FALSE, then the file is created in netcdf version 3 format UNLESS the user has requested features that require version 4. Deafult is TRUE.}
+\item{force_v4}{Logical. Currently unused internally.}
 
-\item{ignore.case}{If TRUE, ignore case in matching dimension names and MARGIN. Default is FALSE.}
+\item{ignore.case}{Logical. If `TRUE`, ignore case when matching dimension
+names supplied in `MARGIN`.}
+}
+\value{
+Invisibly returns `output`.
 }
 \description{
-Apply Functions Over Dimensions of a netCDF variable.
+Reads a variable from a netCDF file, applies a function over one or more of
+its dimensions using [base::apply()], and writes the result to a new netCDF
+file.
+}
+\details{
+The selected variable is read into memory and processed with [base::apply()].
+The output retains the dimensions specified in `MARGIN`. If `FUN` returns a
+vector of length greater than one, an additional dimension is appended to the
+result; its coordinate values are taken from `newdim` when provided, or
+generated automatically otherwise.
+}
+\examples{
+\dontrun{
+## Mean over the time dimension
+nc_apply(
+  filename = "input.nc",
+  varid = "temp",
+  MARGIN = c("lon", "lat"),
+  FUN = mean,
+  na.rm = TRUE,
+  output = "temp_mean.nc"
+)
+
+## Quantiles over the depth dimension
+nc_apply(
+  filename = "input.nc",
+  varid = "temp",
+  MARGIN = c("lon", "lat"),
+  FUN = quantile,
+  probs = c(0.25, 0.5, 0.75),
+  newdim = c(25, 50, 75),
+  output = "temp_quantiles.nc"
+)
+}
+}
+\seealso{
+[nc_subset()], [write_ncdf()], [base::apply()]
 }
