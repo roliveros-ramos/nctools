@@ -1,3 +1,13 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 R/oldCode.R
+R/nctools-regrid.R
+R/nctools-regrid2.R
+TODO.md
+sandbox
+sandbox/*
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
+README.Rmd
