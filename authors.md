@@ -11,12 +11,12 @@ Source:
 [`DESCRIPTION`](https://github.com/roliveros-ramos/nctools/blob/master/DESCRIPTION)
 
 Oliveros-Ramos R (2026). *nctools: Tools for Manipulating netCDF Files*.
-R package version 0.2, <https://roliveros-ramos.github.io/nctools>.
+R package version 0.2, <https://roliveros-ramos.github.io/nctools/>.
 
     @Manual{,
       title = {nctools: Tools for Manipulating netCDF Files},
       author = {Ricardo Oliveros-Ramos},
       year = {2026},
       note = {R package version 0.2},
-      url = {https://roliveros-ramos.github.io/nctools},
+      url = {https://roliveros-ramos.github.io/nctools/},
     }
