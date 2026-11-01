@@ -10,6 +10,9 @@ sandbox/*
 ^docs$
 ^pkgdown$
 ^\.github$
-README.Rmd
+^README\.Rmd$
 ^\.positai$
 ^\.claude$
+^data-raw$
+^AGENTS\.md$
+^cran-comments\.md$

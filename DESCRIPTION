@@ -1,5 +1,5 @@
 Package: nctools
-Version: 0.2
+Version: 0.2.0
 Title: Tools for Manipulating netCDF Files
 Description: Provides helper functions for creating, editing, subsetting,
     concatenating, and transforming netCDF files. The package includes
@@ -23,3 +23,4 @@ BugReports: https://github.com/roliveros-ramos/nctools/issues
 ByteCompile: TRUE
 Encoding: UTF-8
 Config/roxygen2/version: 8.0.0
+Roxygen: list(markdown = TRUE)
