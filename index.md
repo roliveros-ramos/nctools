@@ -29,6 +29,7 @@ for documentation and examples.
 ### Installation
 
 ``` r
+
 # Once available on CRAN:
 install.packages("nctools")
 
@@ -51,6 +52,7 @@ variable name, dimensions, and metadata directly in R.
 Load the package:
 
 ``` r
+
 library(nctools)
 ```
 
@@ -61,6 +63,7 @@ The main entry point of the package is
 export array data created in R to a netCDF file.
 
 ``` r
+
 x <- array(rnorm(24), dim = c(4, 3, 2))
 
 write_ncdf(
@@ -86,6 +89,7 @@ utilities for common follow-up tasks.
 Subset a variable using dimension bounds:
 
 ``` r
+
 nc_subset(
   filename = "example.nc",
   varid = "temp",
@@ -98,6 +102,7 @@ nc_subset(
 Compute a summary statistic over selected margins:
 
 ``` r
+
 nc_mean(
   filename = "example.nc",
   varid = "temp",
@@ -109,6 +114,7 @@ nc_mean(
 Change the longitude convention of a variable:
 
 ``` r
+
 nc_changePrimeMeridian(
   filename = "example.nc",
   output = "example_180.nc",
@@ -121,6 +127,7 @@ nc_changePrimeMeridian(
 Useful entry points to explore the package include:
 
 ``` r
+
 ?write_ncdf
 ?nc_subset
 ?nc_apply
