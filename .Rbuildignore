@@ -11,3 +11,5 @@ sandbox/*
 ^pkgdown$
 ^\.github$
 README.Rmd
+^\.positai$
+^\.claude$
