@@ -24,12 +24,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' lon <- c(170, 180, 190, 350)
-#'
-#' checkLongitude(lon, primeMeridian = "center")
-#' checkLongitude(lon, primeMeridian = "left")
-#' }
+#' local({
+#'   checkLongitude(c(-80, -70, -60), primeMeridian = "left")
+#' })
 checkLongitude = function(x, primeMeridian="center", sort=FALSE, ...) {
 
   primeMeridian = match.arg(arg=primeMeridian, choices=c("center", "left"))
@@ -79,10 +76,9 @@ checkLongitude = function(x, primeMeridian="center", sort=FALSE, ...) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' findPrimeMeridian(c(-10, 0, 20))
-#' findPrimeMeridian(c(10, 180, 350))
-#' }
+#' local({
+#'   findPrimeMeridian(c(-80, -70, -60))
+#' })
 findPrimeMeridian = function(x) {
   if(any(x<0)) return("center")
   if(any(x>180)) return("left")

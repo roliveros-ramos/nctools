@@ -29,14 +29,17 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc <- ncdf4::nc_open("input.nc")
-#' on.exit(ncdf4::nc_close(nc))
-#'
-#' ncvar_dim(nc)
-#' ncvar_dim(nc, varid = "temp")
-#' ncvar_dim(nc, varid = "temp", value = TRUE)
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   copy = tempfile(fileext = ".nc")
+#'   file.copy(input, copy)
+#'   nc = ncdf4::nc_open(copy, write = TRUE)
+#'   on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+#'   ncvar_dim(nc)
+#' })
 ncvar_dim = function(nc, varid=NULL, value=FALSE) {
 
   if (!inherits(nc, "ncdf4"))
@@ -75,12 +78,17 @@ ncvar_dim = function(nc, varid=NULL, value=FALSE) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc <- ncdf4::nc_open("input.nc")
-#' on.exit(ncdf4::nc_close(nc))
-#'
-#' ncvar_size(nc, varid = "temp")
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   copy = tempfile(fileext = ".nc")
+#'   file.copy(input, copy)
+#'   nc = ncdf4::nc_open(copy, write = TRUE)
+#'   on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+#'   ncvar_size(nc)
+#' })
 ncvar_size = function(nc, varid=NULL) {
 
   if (!inherits(nc, "ncdf4"))
@@ -113,13 +121,17 @@ ncvar_size = function(nc, varid=NULL) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc <- ncdf4::nc_open("input.nc")
-#' on.exit(ncdf4::nc_close(nc))
-#'
-#' ncvar_compression(nc)
-#' ncvar_compression(nc, varid = "temp")
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   copy = tempfile(fileext = ".nc")
+#'   file.copy(input, copy)
+#'   nc = ncdf4::nc_open(copy, write = TRUE)
+#'   on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+#'   ncvar_compression(nc)
+#' })
 ncvar_compression = function(nc, varid=NA) {
   if(is.na(varid)) return(sapply(nc$var, FUN=.getCompression))
   varid = .checkVarid(varid=varid, nc=nc)
@@ -144,12 +156,19 @@ ncvar_compression = function(nc, varid=NA) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc <- ncdf4::nc_open("input.nc")
-#' on.exit(ncdf4::nc_close(nc))
-#'
-#' nc <- ncvar_change_compression(nc, varid = "temp", compression = 4)
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   copy = tempfile(fileext = ".nc")
+#'   file.copy(input, copy)
+#'   nc = ncdf4::nc_open(copy, write = TRUE)
+#'   on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+#'   nc = ncvar_change_compression(nc, compression = 4)
+#'   ncvar_compression(nc)
+#'   # This changes the in-memory definition, not the stored data.
+#' })
 ncvar_change_compression = function(nc, varid=NA, compression) {
   if(is.na(varid)) {
     nc$var = lapply(nc$var, FUN=.setCompression, compression=compression)
@@ -178,12 +197,17 @@ ncvar_change_compression = function(nc, varid=NA, compression) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc <- ncdf4::nc_open("input.nc")
-#' on.exit(ncdf4::nc_close(nc))
-#'
-#' ncdim_size(nc)
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   copy = tempfile(fileext = ".nc")
+#'   file.copy(input, copy)
+#'   nc = ncdf4::nc_open(copy, write = TRUE)
+#'   on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+#'   ncdim_size(nc)
+#' })
 ncdim_size = function(nc) {
 
   if (!inherits(nc, "ncdf4"))
@@ -207,12 +231,17 @@ ncdim_size = function(nc) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc <- ncdf4::nc_open("input.nc")
-#' on.exit(ncdf4::nc_close(nc))
-#'
-#' ncdim_isUnlim(nc)
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   copy = tempfile(fileext = ".nc")
+#'   file.copy(input, copy)
+#'   nc = ncdf4::nc_open(copy, write = TRUE)
+#'   on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+#'   ncdim_isUnlim(nc)
+#' })
 ncdim_isUnlim = function(nc) {
 
   if (!inherits(nc, "ncdf4"))
@@ -241,13 +270,17 @@ ncdim_isUnlim = function(nc) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc <- ncdf4::nc_open("input.nc")
-#' on.exit(ncdf4::nc_close(nc))
-#'
-#' ncatt_get_all(nc, type = "var")
-#' ncatt_get_all(nc, type = "dim")
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   copy = tempfile(fileext = ".nc")
+#'   file.copy(input, copy)
+#'   nc = ncdf4::nc_open(copy, write = TRUE)
+#'   on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+#'   ncatt_get_all(nc)
+#' })
 ncatt_get_all = function(nc, type=c("var", "dim")) {
 
   if (!inherits(nc, "ncdf4"))
@@ -293,23 +326,17 @@ ncatt_get_all = function(nc, type=c("var", "dim")) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc <- ncdf4::nc_open("input.nc", write = TRUE)
-#' on.exit(ncdf4::nc_close(nc))
-#'
-#' ncatt_put_all(
-#'   nc,
-#'   varid = "temp",
-#'   attname = c("long_name", "units"),
-#'   attval = list("Temperature", "degree_C")
-#' )
-#'
-#' ncatt_put_all(
-#'   nc,
-#'   varid = 0,
-#'   attval = list(title = "Example file", source = "nctools")
-#' )
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   copy = tempfile(fileext = ".nc")
+#'   file.copy(input, copy)
+#'   nc = ncdf4::nc_open(copy, write = TRUE)
+#'   on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+#'   ncatt_put_all(nc, 0, attval = list(title = "Edited copy"))
+#' })
 ncatt_put_all = function(nc, varid, attname, attval,
                          prec=NA, verbose=FALSE, definemode=FALSE) {
 

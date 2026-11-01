@@ -114,7 +114,6 @@ NULL
 #' @description
 #' `.nc_renameVar()` renames one or more variables in a netCDF file.
 #'
-#' @inheritParams .nc_renameDim
 #'
 #' @details
 #' If `output` differs from `filename`, the input file is first copied to

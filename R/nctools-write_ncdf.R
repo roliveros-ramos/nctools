@@ -101,7 +101,6 @@ write_ncdf.default = function(x, filename, varid, dim, longname, units, prec="fl
 }
 
 #' @rdname write_ncdf
-#' @inheritParams write_ncdf.default
 #'
 #' @details
 #' `write_ncdf.list()` writes each element of `x` as a separate variable in the

@@ -22,15 +22,15 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc_quantile(
-#'   filename = "input.nc",
-#'   varid = "temp",
-#'   MARGIN = c("lon", "lat"),
-#'   probs = c(0.1, 0.5, 0.9),
-#'   output = "temp_quantiles.nc"
-#' )
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   output = tempfile(fileext = ".nc")
+#'   on.exit(unlink(output))
+#'   nc_quantile(input, "temperature", MARGIN = c("lon", "lat"), output = output)
+#' })
 nc_quantile = function(filename, varid, MARGIN=c(1,2), na.rm=TRUE, probs=c(0, 0.5, 1),
                        output=NULL, drop=TRUE, compression=NA, verbose=FALSE,
                        force_v4=TRUE, ignore.case=FALSE) {
@@ -72,31 +72,15 @@ nc_quantile = function(filename, varid, MARGIN=c(1,2), na.rm=TRUE, probs=c(0, 0.
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc_mean(
-#'   filename = "input.nc",
-#'   varid = "temp",
-#'   MARGIN = c("lon", "lat"),
-#'   na.rm = TRUE,
-#'   output = "temp_mean.nc"
-#' )
-#'
-#' nc_min(
-#'   filename = "input.nc",
-#'   varid = "temp",
-#'   MARGIN = c("lon", "lat"),
-#'   na.rm = TRUE,
-#'   output = "temp_min.nc"
-#' )
-#'
-#' nc_max(
-#'   filename = "input.nc",
-#'   varid = "temp",
-#'   MARGIN = c("lon", "lat"),
-#'   na.rm = TRUE,
-#'   output = "temp_max.nc"
-#' )
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   output = tempfile(fileext = ".nc")
+#'   on.exit(unlink(output))
+#'   nc_mean(input, "temperature", MARGIN = c("lon", "lat"), output = output)
+#' })
 nc_mean = function(filename, varid, MARGIN=c(1,2), na.rm=TRUE, trim=0,
                    output=NULL, drop=TRUE, compression=NA, verbose=FALSE,
                    force_v4=TRUE, ignore.case=FALSE) {

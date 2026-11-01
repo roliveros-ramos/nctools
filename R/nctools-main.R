@@ -17,13 +17,15 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc_extract(
-#'   filename = "input.nc",
-#'   varid = "temp",
-#'   output = "temp_only.nc"
-#' )
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   output = tempfile(fileext = ".nc")
+#'   on.exit(unlink(output))
+#'   nc_extract(input, "temperature", output)
+#' })
 nc_extract = function(filename, varid, output) {
   nc = nc_open(filename)
   on.exit(nc_close(nc))
@@ -62,14 +64,15 @@ nc_extract = function(filename, varid, output) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc_rename(
-#'   filename = "input.nc",
-#'   oldnames = c("lon", "lat", "temp"),
-#'   newnames = c("longitude", "latitude", "temperature"),
-#'   output = "renamed.nc"
-#' )
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   output = tempfile(fileext = ".nc")
+#'   on.exit(unlink(output))
+#'   nc_rename(input, "temperature", "temp", output = output)
+#' })
 nc_rename = function(filename, oldnames, newnames, output, verbose=FALSE, overwrite=FALSE) {
 
   if(missing(output) & !isTRUE(overwrite))
@@ -162,13 +165,23 @@ nc_rename = function(filename, oldnames, newnames, output, verbose=FALSE, overwr
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc_rcat(
-#'   filenames = c("part1.nc", "part2.nc", "part3.nc"),
-#'   varid = "temp",
-#'   output = "combined.nc"
-#' )
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   output = tempfile(fileext = ".nc")
+#'   on.exit(unlink(output))
+#'   files = system.file("extdata",
+#'     sprintf("temperature_2001_%02d.nc",
+#'     1:3),
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   first = tempfile(fileext = ".nc")
+#'   on.exit(unlink(first), add = TRUE)
+#'   nc_rcat(files[1:2], "temperature", first)
+#'   nc_rcat(c(first, files[3]), "temperature", output)
+#' })
 nc_rcat = function(filenames, varid, output) {
   # add function validation
   # check for unlim
@@ -241,16 +254,15 @@ nc_rcat = function(filenames, varid, output) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc_subset(
-#'   filename = "input.nc",
-#'   varid = "temp",
-#'   output = "subset.nc",
-#'   lon = c(-80, -70),
-#'   lat = c(-20, -10),
-#'   depth = c(0, 100)
-#' )
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   output = tempfile(fileext = ".nc")
+#'   on.exit(unlink(output))
+#'   nc_subset(input, "temperature", output, lon = c(-75, -70), lat = c(-20, -10))
+#' })
 nc_subset = function(filename, varid, output, newvarid, compression,
                      force_v4=FALSE, ..., ignore.case=FALSE, drop=FALSE) {
 
@@ -378,13 +390,30 @@ nc_subset = function(filename, varid, output, newvarid, compression,
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc_unlim(
-#'   filename = "input.nc",
-#'   unlim = "time",
-#'   output = "time_unlimited.nc"
-#' )
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   output = tempfile(fileext = ".nc")
+#'   on.exit(unlink(output))
+#'   nc = ncdf4::nc_open(input)
+#'   x = tryCatch(ncdf4::ncvar_get(nc, "temperature"), finally = ncdf4::nc_close(nc))
+#'   fixed = tempfile(fileext = ".nc")
+#'   on.exit(unlink(fixed), add = TRUE)
+#'   write_ncdf(x,
+#'     fixed,
+#'     "temperature",
+#'     dim = list(lon = seq(-80,
+#'     -65,
+#'     length.out = 15),
+#'     lat = seq(-25,
+#'     -6,
+#'     length.out = 20),
+#'     time = 0:30),
+#'     compression = NA)
+#'   nc_unlim(fixed, "time", output)
+#' })
 nc_unlim = function(filename, unlim, output=NULL) {
   # open ncdf connection
   if(is.null(output)) output = filename
@@ -462,28 +491,15 @@ nc_unlim = function(filename, unlim, output=NULL) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' ## Mean over the time dimension
-#' nc_apply(
-#'   filename = "input.nc",
-#'   varid = "temp",
-#'   MARGIN = c("lon", "lat"),
-#'   FUN = mean,
-#'   na.rm = TRUE,
-#'   output = "temp_mean.nc"
-#' )
-#'
-#' ## Quantiles over the depth dimension
-#' nc_apply(
-#'   filename = "input.nc",
-#'   varid = "temp",
-#'   MARGIN = c("lon", "lat"),
-#'   FUN = quantile,
-#'   probs = c(0.25, 0.5, 0.75),
-#'   newdim = c(25, 50, 75),
-#'   output = "temp_quantiles.nc"
-#' )
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   output = tempfile(fileext = ".nc")
+#'   on.exit(unlink(output))
+#'   nc_apply(input, "temperature", MARGIN = "time", FUN = mean, na.rm = TRUE, output = output)
+#' })
 nc_apply = function(filename, varid, MARGIN, FUN, ..., output=NULL, drop=FALSE,
                     newdim = NULL, name=NULL, longname=NULL, units=NULL,
                     compression=NA, verbose=FALSE, force_v4=TRUE,
@@ -598,37 +614,54 @@ nc_apply = function(filename, varid, MARGIN, FUN, ..., output=NULL, drop=FALSE,
 #' @return Invisibly returns `filename`.
 #'
 #' @examples
-#' \dontrun{
-#' ## Single variable
-#' x <- array(rnorm(20 * 10), dim = c(20, 10))
+#' local({
+#'   # Synthetic daily temperature for January 2001, as in the bundled data
+#'   lon = seq(-80, -65, length.out = 15)
+#'   lat = seq(-25, -6, length.out = 20)
+#'   days = 0:30
+#'   spatial = outer(lon, lat, function(x, y)
+#'     16 + 6 * exp(-((x + 72)^2 / 16 + (y + 15)^2 / 36)) - 0.15 * (y + 15))
+#'   temperature = outer(spatial, days, function(field, day)
+#'     field + 2 * sin(2 * pi * day / 365) + 0.2 * sin(2 * pi * day / 7))
+#'   temperature[1:2, 1:2, ] = NA_real_
 #'
-#' write_ncdf(
-#'   x,
-#'   filename = "example_single.nc",
-#'   varid = "temp",
-#'   dim = list(lon = seq_len(20), lat = seq_len(10)),
-#'   longname = "Temperature",
-#'   units = "degree_C"
-#' )
+#'   files = vapply(seq_len(3), function(i) tempfile(fileext = ".nc"), "")
+#'   on.exit(unlink(files))
 #'
-#' ## Multiple variables
-#' x1 <- array(rnorm(20 * 10), dim = c(20, 10))
-#' x2 <- array(rnorm(20 * 10), dim = c(20, 10))
+#'   # Quick defaults: dimensions are named dim1, dim2, dim3, with index values
+#'   write_ncdf(temperature, filename = files[1], varid = "temperature")
 #'
-#' write_ncdf(
-#'   list(temp = x1, salt = x2),
-#'   filename = "example_multi.nc",
-#'   varid = c("temp", "salt"),
-#'   dim = list(lon = seq_len(20), lat = seq_len(10)),
-#'   longname = c("Temperature", "Salinity"),
-#'   units = c("degree_C", "psu")
-#' )
-#' }
+#'   # Supply geographic coordinates, time coordinates, and variable metadata
+#'   coordinates = list(lon = lon, lat = lat, time = days)
+#'   coordinate_units = c("degrees_east", "degrees_north", "days since 2001-01-01")
+#'   write_ncdf(temperature, filename = files[2], varid = "temperature",
+#'     dim = coordinates, dim.units = coordinate_units,
+#'     longname = "Synthetic daily temperature", units = "degree_C")
 #'
+#'   # Add descriptive attributes, unlimited time, and explicit storage settings
+#'   write_ncdf(temperature, filename = files[3], varid = "temperature",
+#'     dim = coordinates, dim.units = coordinate_units,
+#'     dim.longname = c("Longitude", "Latitude", "Time"),
+#'     longname = "Synthetic daily temperature", units = "degree_C",
+#'     unlim = "time", prec = "float", missval = -9999,
+#'     compression = 4, force_v4 = TRUE,
+#'     global = list(
+#'       title = "Synthetic temperature for January 2001",
+#'       source = "Spatial gradient and Gaussian centre with annual and weekly cycles",
+#'       comment = "Synthetic data, not observations; a fixed corner patch is missing."
+#'     ))
+#'
+#'   nc = ncdf4::nc_open(files[3])
+#'   tryCatch({
+#'     print(ncvar_dim(nc, "temperature"))
+#'     print(ncdf4::ncatt_get(nc, 0, "title"))
+#'   }, finally = ncdf4::nc_close(nc))
+#' })
 #' @export
 write_ncdf = function(x, filename, ...) {
   UseMethod("write_ncdf")
 }
+
 
 
 

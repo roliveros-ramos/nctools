@@ -48,24 +48,15 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' nc_changePrimeMeridian(
-#'   filename = "input.nc",
-#'   output = "output.nc",
-#'   varid = "temp",
-#'   MARGIN = "lon",
-#'   primeMeridian = "center"
-#' )
-#'
-#' nc_changePrimeMeridian(
-#'   filename = "input.nc",
-#'   output = "output_pacific.nc",
-#'   varid = "temp",
-#'   MARGIN = 1,
-#'   primeMeridian = "left",
-#'   compression = 4
-#' )
-#' }
+#' local({
+#'   input = system.file("extdata",
+#'     "temperature_2001_01.nc",
+#'     package = "nctools",
+#'     mustWork = TRUE)
+#'   output = tempfile(fileext = ".nc")
+#'   on.exit(unlink(output))
+#'   nc_changePrimeMeridian(input, output, varid = "temperature", primeMeridian = "left")
+#' })
 nc_changePrimeMeridian = function(filename, output, varid=NA, MARGIN=1, primeMeridian="center",
                                   verbose=FALSE, overwrite=FALSE, compression=NA,
                                   mem.limit=3072, ignore.case=FALSE) {
