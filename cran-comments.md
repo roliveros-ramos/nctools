@@ -33,3 +33,9 @@ Please fix and resubmit.
 
 Best,
 Benjamin Altmann
+
+## Example revision
+All help examples now run without dontrun wrappers, using three bundled synthetic monthly temperature files or inline data. Installed data are read-only; outputs use temporary files. A standard Windows R 4.6.1 check without the PDF manual passed. DESCRIPTION references remain to be addressed before resubmission.
+
+Final validation: R CMD check --as-cran --no-manual on Windows R 4.6.1 completed with 0 errors, 0 warnings and 2 NOTEs (new submission; local Pandoc unavailable). All examples and tests/example-data.R passed. PDF manual generation and other operating systems have not been checked.
+
