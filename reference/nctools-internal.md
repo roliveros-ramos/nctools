@@ -1,23 +1,23 @@
 # Internal netCDF helpers
 
-Developer-facing helper functions used internally by \`nctools\` for
+Developer-facing helper functions used internally by `nctools` for
 variable validation, dimension matching, and renaming variables or
 dimensions in netCDF files.
 
-\`.replaceInDim()\` replaces one component of a named dimension inside a
+`.replaceInDim()` replaces one component of a named dimension inside a
 variable definition.
 
-\`.nc_renameDim()\` rewrites a netCDF file with one or more dimensions
+`.nc_renameDim()` rewrites a netCDF file with one or more dimensions
 renamed.
 
-\`.nc_renameVar()\` renames one or more variables in a netCDF file.
+`.nc_renameVar()` renames one or more variables in a netCDF file.
 
-\`.checkVarid()\` validates a variable identifier against an open netCDF
+`.checkVarid()` validates a variable identifier against an open netCDF
 file and resolves the default variable when the file contains a single
 variable.
 
-\`.getDimensions()\` matches the dimensions of an array to a target
-netCDF dimension-size vector.
+`.getDimensions()` matches the dimensions of an array to a target netCDF
+dimension-size vector.
 
 ## Usage
 
@@ -46,7 +46,7 @@ netCDF dimension-size vector.
 - id:
 
   Character string giving the component of the dimension object to
-  replace, for example \`"name"\`.
+  replace, for example `"name"`.
 
 - value:
 
@@ -63,7 +63,7 @@ netCDF dimension-size vector.
 - newname:
 
   Character vector giving the replacement dimension names. Must have the
-  same length and order as \`oldname\`.
+  same length and order as `oldname`.
 
 - output:
 
@@ -71,17 +71,18 @@ netCDF dimension-size vector.
 
 - verbose:
 
-  Logical. If \`TRUE\`, report progress while rewriting the file.
+  Logical. If `TRUE`, report progress while rewriting the file.
 
 - varid:
 
   Variable identifier supplied by the user. This can be a character
-  string, an object of class \`ncvar4\`, or \`NA\`/missing when the file
+  string, an object of class `ncvar4`, or `NA`/missing when the file
   contains a single variable.
 
 - nc:
 
-  An open netCDF connection created with \[ncdf4::nc_open()\].
+  An open netCDF connection created with
+  [`ncdf4::nc_open()`](https://rdrr.io/pkg/ncdf4/man/nc_open.html).
 
 - dimsize:
 
@@ -91,9 +92,9 @@ netCDF dimension-size vector.
 
 A modified variable definition object.
 
-Invisibly returns \`output\`.
+Invisibly returns `output`.
 
-Invisibly returns \`output\`.
+Invisibly returns `output`.
 
 A validated variable name as a character string.
 
@@ -104,11 +105,11 @@ An integer vector giving the matched dimension positions.
 These functions are not part of the public API and may change without
 notice.
 
-The file is rebuilt from the variable definitions in \`filename\`, with
+The file is rebuilt from the variable definitions in `filename`, with
 the requested dimensions renamed before writing the output file.
 
-If \`output\` differs from \`filename\`, the input file is first copied
-to \`output\`, and the renaming is applied there.
+If `output` differs from `filename`, the input file is first copied to
+`output`, and the renaming is applied there.
 
 Matching is based on dimension lengths. When more than one candidate
 match exists, the first match is used.

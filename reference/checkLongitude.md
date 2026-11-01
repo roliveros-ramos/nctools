@@ -1,7 +1,7 @@
 # Standardise longitude values to a selected prime meridian convention
 
-Converts longitude values to either the \`\[-180, 180\]\` convention or
-the \`\[0, 360\]\` convention.
+Converts longitude values to either the `[-180, 180]` convention or the
+`[0, 360]` convention.
 
 ## Usage
 
@@ -18,12 +18,12 @@ checkLongitude(x, primeMeridian = "center", sort = FALSE, ...)
 - primeMeridian:
 
   Character string specifying the target longitude convention. Use
-  \`"center"\` for longitudes in the \`\[-180, 180\]\` range and
-  \`"left"\` for longitudes in the \`\[0, 360\]\` range.
+  `"center"` for longitudes in the `[-180, 180]` range and `"left"` for
+  longitudes in the `[0, 360]` range.
 
 - sort:
 
-  Logical. If \`TRUE\`, sort the output values after conversion.
+  Logical. If `TRUE`, sort the output values after conversion.
 
 - ...:
 
@@ -36,22 +36,20 @@ convention.
 
 ## Details
 
-Longitude values are modified only when needed. For \`primeMeridian =
-"center"\`, values greater than \`180\` are shifted by subtracting
-\`360\`. For \`primeMeridian = "left"\`, negative values are shifted by
-adding \`360\`.
+Longitude values are modified only when needed. For
+`primeMeridian = "center"`, values greater than `180` are shifted by
+subtracting `360`. For `primeMeridian = "left"`, negative values are
+shifted by adding `360`.
 
 ## See also
 
-\[findPrimeMeridian()\]
+[`findPrimeMeridian()`](findPrimeMeridian.md)
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-lon <- c(170, 180, 190, 350)
-
-checkLongitude(lon, primeMeridian = "center")
-checkLongitude(lon, primeMeridian = "left")
-} # }
+local({
+  checkLongitude(c(-80, -70, -60), primeMeridian = "left")
+})
+#> [1] 280 290 300
 ```

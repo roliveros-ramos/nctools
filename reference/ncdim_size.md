@@ -12,7 +12,8 @@ ncdim_size(nc)
 
 - nc:
 
-  An open netCDF connection created with \[ncdf4::nc_open()\].
+  An open netCDF connection created with
+  [`ncdf4::nc_open()`](https://rdrr.io/pkg/ncdf4/man/nc_open.html).
 
 ## Value
 
@@ -20,15 +21,29 @@ A named list giving the length of each dimension.
 
 ## See also
 
-\[ncvar_dim()\], \[ncdim_isUnlim()\]
+[`ncvar_dim()`](ncvar_dim.md), [`ncdim_isUnlim()`](ncdim_isUnlim.md)
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-nc <- ncdf4::nc_open("input.nc")
-on.exit(ncdf4::nc_close(nc))
-
-ncdim_size(nc)
-} # }
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  copy = tempfile(fileext = ".nc")
+  file.copy(input, copy)
+  nc = ncdf4::nc_open(copy, write = TRUE)
+  on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+  ncdim_size(nc)
+})
+#> $lon
+#> [1] 15
+#> 
+#> $lat
+#> [1] 20
+#> 
+#> $time
+#> [1] 31
+#> 
 ```

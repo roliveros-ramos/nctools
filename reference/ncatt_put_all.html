@@ -9,7 +9,7 @@ open netCDF file."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nctools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,74 +58,68 @@ open netCDF file.</p>
 
 
 <dl><dt id="arg-nc">nc<a class="anchor" aria-label="anchor" href="#arg-nc"></a></dt>
-<dd><p>An open netCDF connection created with [ncdf4::nc_open()].</p></dd>
+<dd><p>An open netCDF connection created with <code><a href="https://rdrr.io/pkg/ncdf4/man/nc_open.html" class="external-link">ncdf4::nc_open()</a></code>.</p></dd>
 
 
 <dt id="arg-varid">varid<a class="anchor" aria-label="anchor" href="#arg-varid"></a></dt>
 <dd><p>Variable identifier. This can be a character string giving the
-variable name, an object of class `ncvar4`, or an integer id. As a special
-case, `varid = 0` writes global attributes.</p></dd>
+variable name, an object of class <code>ncvar4</code>, or an integer id. As a special
+case, <code>varid = 0</code> writes global attributes.</p></dd>
 
 
 <dt id="arg-attname">attname<a class="anchor" aria-label="anchor" href="#arg-attname"></a></dt>
 <dd><p>Names of the attributes to write. Alternatively, this may be a
-named vector or list of attribute values when `attval` is omitted.</p></dd>
+named vector or list of attribute values when <code>attval</code> is omitted.</p></dd>
 
 
 <dt id="arg-attval">attval<a class="anchor" aria-label="anchor" href="#arg-attval"></a></dt>
-<dd><p>Values of the attributes to write. If omitted, `attname` must
+<dd><p>Values of the attributes to write. If omitted, <code>attname</code> must
 be a named vector or list whose names are used as attribute names.</p></dd>
 
 
 <dt id="arg-prec">prec<a class="anchor" aria-label="anchor" href="#arg-prec"></a></dt>
 <dd><p>Optional precision used when writing the attributes. Passed to
-[ncdf4::ncatt_put()].</p></dd>
+<code><a href="https://rdrr.io/pkg/ncdf4/man/ncatt_put.html" class="external-link">ncdf4::ncatt_put()</a></code>.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p>Logical. If `TRUE`, print additional information while writing
+<dd><p>Logical. If <code>TRUE</code>, print additional information while writing
 attributes.</p></dd>
 
 
 <dt id="arg-definemode">definemode<a class="anchor" aria-label="anchor" href="#arg-definemode"></a></dt>
-<dd><p>Logical. Passed to [ncdf4::ncatt_put()]. See that function
+<dd><p>Logical. Passed to <code><a href="https://rdrr.io/pkg/ncdf4/man/ncatt_put.html" class="external-link">ncdf4::ncatt_put()</a></code>. See that function
 for details.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>`NULL`, invisibly.</p>
+    <p><code>NULL</code>, invisibly.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Attributes can be supplied either as parallel `attname` and `attval`
+    <p>Attributes can be supplied either as parallel <code>attname</code> and <code>attval</code>
 arguments, or as a single named vector or list. Missing attribute names are
 not allowed.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>[ncatt_get_all()], [ncdf4::ncatt_put()]</p></div>
+    <div class="dont-index"><p><code><a href="ncatt_get_all.html">ncatt_get_all()</a></code>, <code><a href="https://rdrr.io/pkg/ncdf4/man/ncatt_put.html" class="external-link">ncdf4::ncatt_put()</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="va">nc</span> <span class="op">&lt;-</span> <span class="fu">ncdf4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncdf4/man/nc_open.html" class="external-link">nc_open</a></span><span class="op">(</span><span class="st">"input.nc"</span>, write <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit</a></span><span class="op">(</span><span class="fu">ncdf4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncdf4/man/nc_close.html" class="external-link">nc_close</a></span><span class="op">(</span><span class="va">nc</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">ncatt_put_all</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">nc</span>,</span></span>
-<span class="r-in"><span>  varid <span class="op">=</span> <span class="st">"temp"</span>,</span></span>
-<span class="r-in"><span>  attname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"long_name"</span>, <span class="st">"units"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  attval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Temperature"</span>, <span class="st">"degree_C"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">ncatt_put_all</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">nc</span>,</span></span>
-<span class="r-in"><span>  varid <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>  attval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Example file"</span>, source <span class="op">=</span> <span class="st">"nctools"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">local</a></span><span class="op">(</span><span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">input</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"temperature_2001_01.nc"</span>,</span></span>
+<span class="r-in"><span>    package <span class="op">=</span> <span class="st">"nctools"</span>,</span></span>
+<span class="r-in"><span>    mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">copy</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".nc"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span><span class="va">input</span>, <span class="va">copy</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">nc</span> <span class="op">=</span> <span class="fu">ncdf4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncdf4/man/nc_open.html" class="external-link">nc_open</a></span><span class="op">(</span><span class="va">copy</span>, write <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit</a></span><span class="op">(</span><span class="op">{</span> <span class="fu">ncdf4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncdf4/man/nc_close.html" class="external-link">nc_close</a></span><span class="op">(</span><span class="va">nc</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">copy</span><span class="op">)</span> <span class="op">}</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">ncatt_put_all</span><span class="op">(</span><span class="va">nc</span>, <span class="fl">0</span>, attval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Edited copy"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

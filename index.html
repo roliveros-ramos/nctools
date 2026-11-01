@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">nctools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,8 +54,8 @@
 <div class="section level3">
 <h3 id="tools-for-writing-and-manipulating-netcdf-files">Tools for Writing and Manipulating netCDF Files<a class="anchor" aria-label="anchor" href="#tools-for-writing-and-manipulating-netcdf-files"></a>
 </h3>
-<p>At its core, <strong>nctools</strong> is designed to make it easy to write array data from R to netCDF files, then inspect and manipulate those files with lightweight helper functions.</p>
 <p>This R package, <strong>nctools</strong>, provides helper functions for creating, editing, subsetting, concatenating, and transforming netCDF files from within R. Its main entry point is <strong><code><a href="reference/write_ncdf.html">write_ncdf()</a></code></strong>, which offers a quick and convenient way to write array data generated in R to netCDF files with minimal boilerplate.</p>
+<p>At its core, <strong>nctools</strong> is designed to make it easy to write array data from R to netCDF files, then inspect and manipulate those files with lightweight helper functions.</p>
 <p>Built around <strong>ncdf4</strong>, the package also includes utilities for inspecting variables and dimensions, reading and writing attributes, renaming variables and dimensions, subsetting variables by dimension values, concatenating records along unlimited dimensions, changing longitude conventions, and applying summary functions over selected margins.</p>
 <p>The package is especially useful in modelling and environmental workflows where arrays are first generated or processed in R and then need to be exported to netCDF format for storage, exchange, or downstream analysis. See <a href="https://roliveros-ramos.github.io/nctools/" class="external-link uri">https://roliveros-ramos.github.io/nctools/</a> for documentation and examples.</p>
 </div>

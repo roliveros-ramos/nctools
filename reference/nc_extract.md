@@ -27,20 +27,23 @@ nc_extract(filename, varid, output)
 
 ## Value
 
-Invisibly returns \`output\`.
+Invisibly returns `output`.
 
 ## See also
 
-\[write_ncdf()\], \[nc_subset()\], \[nc_apply()\]
+[`write_ncdf()`](write_ncdf.md), [`nc_subset()`](nc_subset.md),
+[`nc_apply()`](nc_apply.md)
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-nc_extract(
-  filename = "input.nc",
-  varid = "temp",
-  output = "temp_only.nc"
-)
-} # }
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  nc_extract(input, "temperature", output)
+})
 ```

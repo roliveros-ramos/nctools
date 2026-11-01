@@ -21,71 +21,68 @@ ncatt_put_all(
 
 - nc:
 
-  An open netCDF connection created with \[ncdf4::nc_open()\].
+  An open netCDF connection created with
+  [`ncdf4::nc_open()`](https://rdrr.io/pkg/ncdf4/man/nc_open.html).
 
 - varid:
 
   Variable identifier. This can be a character string giving the
-  variable name, an object of class \`ncvar4\`, or an integer id. As a
-  special case, \`varid = 0\` writes global attributes.
+  variable name, an object of class `ncvar4`, or an integer id. As a
+  special case, `varid = 0` writes global attributes.
 
 - attname:
 
   Names of the attributes to write. Alternatively, this may be a named
-  vector or list of attribute values when \`attval\` is omitted.
+  vector or list of attribute values when `attval` is omitted.
 
 - attval:
 
-  Values of the attributes to write. If omitted, \`attname\` must be a
+  Values of the attributes to write. If omitted, `attname` must be a
   named vector or list whose names are used as attribute names.
 
 - prec:
 
   Optional precision used when writing the attributes. Passed to
-  \[ncdf4::ncatt_put()\].
+  [`ncdf4::ncatt_put()`](https://rdrr.io/pkg/ncdf4/man/ncatt_put.html).
 
 - verbose:
 
-  Logical. If \`TRUE\`, print additional information while writing
+  Logical. If `TRUE`, print additional information while writing
   attributes.
 
 - definemode:
 
-  Logical. Passed to \[ncdf4::ncatt_put()\]. See that function for
-  details.
+  Logical. Passed to
+  [`ncdf4::ncatt_put()`](https://rdrr.io/pkg/ncdf4/man/ncatt_put.html).
+  See that function for details.
 
 ## Value
 
-\`NULL\`, invisibly.
+`NULL`, invisibly.
 
 ## Details
 
-Attributes can be supplied either as parallel \`attname\` and \`attval\`
+Attributes can be supplied either as parallel `attname` and `attval`
 arguments, or as a single named vector or list. Missing attribute names
 are not allowed.
 
 ## See also
 
-\[ncatt_get_all()\], \[ncdf4::ncatt_put()\]
+[`ncatt_get_all()`](ncatt_get_all.md),
+[`ncdf4::ncatt_put()`](https://rdrr.io/pkg/ncdf4/man/ncatt_put.html)
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-nc <- ncdf4::nc_open("input.nc", write = TRUE)
-on.exit(ncdf4::nc_close(nc))
-
-ncatt_put_all(
-  nc,
-  varid = "temp",
-  attname = c("long_name", "units"),
-  attval = list("Temperature", "degree_C")
-)
-
-ncatt_put_all(
-  nc,
-  varid = 0,
-  attval = list(title = "Example file", source = "nctools")
-)
-} # }
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  copy = tempfile(fileext = ".nc")
+  file.copy(input, copy)
+  nc = ncdf4::nc_open(copy, write = TRUE)
+  on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+  ncatt_put_all(nc, 0, attval = list(title = "Edited copy"))
+})
 ```

@@ -2,16 +2,16 @@
 
 ### Tools for Writing and Manipulating netCDF Files
 
-At its core, **nctools** is designed to make it easy to write array data
-from R to netCDF files, then inspect and manipulate those files with
-lightweight helper functions.
-
 This R package, **nctools**, provides helper functions for creating,
 editing, subsetting, concatenating, and transforming netCDF files from
 within R. Its main entry point is
 **[`write_ncdf()`](reference/write_ncdf.md)**, which offers a quick and
 convenient way to write array data generated in R to netCDF files with
 minimal boilerplate.
+
+At its core, **nctools** is designed to make it easy to write array data
+from R to netCDF files, then inspect and manipulate those files with
+lightweight helper functions.
 
 Built around **ncdf4**, the package also includes utilities for
 inspecting variables and dimensions, reading and writing attributes,

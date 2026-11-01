@@ -13,32 +13,39 @@ ncvar_compression(nc, varid = NA)
 
 - nc:
 
-  An open netCDF connection created with \[ncdf4::nc_open()\].
+  An open netCDF connection created with
+  [`ncdf4::nc_open()`](https://rdrr.io/pkg/ncdf4/man/nc_open.html).
 
 - varid:
 
   Variable identifier. This can be a character string giving the
-  variable name, or an object of class \`ncvar4\`. If \`NA\`,
-  compression settings are returned for all variables in the file.
+  variable name, or an object of class `ncvar4`. If `NA`, compression
+  settings are returned for all variables in the file.
 
 ## Value
 
-If \`varid\` is \`NA\`, a named vector or list with the compression
-setting of each variable. Otherwise, the compression setting of the
-selected variable.
+If `varid` is `NA`, a named vector or list with the compression setting
+of each variable. Otherwise, the compression setting of the selected
+variable.
 
 ## See also
 
-\[ncvar_change_compression()\]
+[`ncvar_change_compression()`](ncvar_change_compression.md)
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-nc <- ncdf4::nc_open("input.nc")
-on.exit(ncdf4::nc_close(nc))
-
-ncvar_compression(nc)
-ncvar_compression(nc, varid = "temp")
-} # }
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  copy = tempfile(fileext = ".nc")
+  file.copy(input, copy)
+  nc = ncdf4::nc_open(copy, write = TRUE)
+  on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+  ncvar_compression(nc)
+})
+#> temperature 
+#>          NA 
 ```

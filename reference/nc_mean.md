@@ -1,8 +1,8 @@
 # Compute summary statistics of a netCDF variable
 
 Applies a summary function to a variable in a netCDF file over the
-dimensions not listed in \`MARGIN\`, and writes the result to a new
-netCDF file.
+dimensions not listed in `MARGIN`, and writes the result to a new netCDF
+file.
 
 ## Usage
 
@@ -63,18 +63,20 @@ nc_max(
 - MARGIN:
 
   Integer or character vector specifying the dimensions to retain in the
-  output, as in \[base::apply()\]. Dimension names may be used.
+  output, as in [`base::apply()`](https://rdrr.io/r/base/apply.html).
+  Dimension names may be used.
 
 - na.rm:
 
-  Logical. If \`TRUE\`, missing values are removed before computing the
+  Logical. If `TRUE`, missing values are removed before computing the
   statistic.
 
 - trim:
 
   Numeric scalar giving the fraction of observations to be trimmed from
-  each end before computing the mean. Passed to \[base::mean()\]. Used
-  only by \`nc_mean()\`.
+  each end before computing the mean. Passed to
+  [`base::mean()`](https://rdrr.io/r/base/mean.html). Used only by
+  `nc_mean()`.
 
 - output:
 
@@ -98,50 +100,39 @@ nc_max(
 
 - ignore.case:
 
-  Logical. If \`TRUE\`, ignore case when matching dimension names
-  supplied in \`MARGIN\`.
+  Logical. If `TRUE`, ignore case when matching dimension names supplied
+  in `MARGIN`.
 
 ## Value
 
-Invisibly returns \`output\`.
+Invisibly returns `output`.
 
 ## Details
 
-\`nc_mean()\` applies \[base::mean()\], \`nc_min()\` applies
-\[base::min()\], and \`nc_max()\` applies \[base::max()\].
+`nc_mean()` applies [`base::mean()`](https://rdrr.io/r/base/mean.html),
+`nc_min()` applies
+[`base::min()`](https://rdrr.io/r/base/Extremes.html), and `nc_max()`
+applies [`base::max()`](https://rdrr.io/r/base/Extremes.html).
 
-The output retains the dimensions specified in \`MARGIN\`.
+The output retains the dimensions specified in `MARGIN`.
 
 ## See also
 
-\[nc_apply()\], \[base::mean()\], \[base::min()\], \[base::max()\]
+[`nc_apply()`](nc_apply.md),
+[`base::mean()`](https://rdrr.io/r/base/mean.html),
+[`base::min()`](https://rdrr.io/r/base/Extremes.html),
+[`base::max()`](https://rdrr.io/r/base/Extremes.html)
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-nc_mean(
-  filename = "input.nc",
-  varid = "temp",
-  MARGIN = c("lon", "lat"),
-  na.rm = TRUE,
-  output = "temp_mean.nc"
-)
-
-nc_min(
-  filename = "input.nc",
-  varid = "temp",
-  MARGIN = c("lon", "lat"),
-  na.rm = TRUE,
-  output = "temp_min.nc"
-)
-
-nc_max(
-  filename = "input.nc",
-  varid = "temp",
-  MARGIN = c("lon", "lat"),
-  na.rm = TRUE,
-  output = "temp_max.nc"
-)
-} # }
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  nc_mean(input, "temperature", MARGIN = c("lon", "lat"), output = output)
+})
 ```

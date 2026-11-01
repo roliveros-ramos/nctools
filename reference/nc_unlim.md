@@ -21,7 +21,7 @@ nc_unlim(filename, unlim, output = NULL)
 - output:
 
   Optional character string giving the path to the output file. If
-  \`NULL\`, the input file is replaced.
+  `NULL`, the input file is replaced.
 
 ## Value
 
@@ -36,16 +36,33 @@ then copies the variable values to the new file.
 
 ## See also
 
-\[nc_rcat()\], \[write_ncdf()\]
+[`nc_rcat()`](nc_rcat.md), [`write_ncdf()`](write_ncdf.md)
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-nc_unlim(
-  filename = "input.nc",
-  unlim = "time",
-  output = "time_unlimited.nc"
-)
-} # }
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  nc = ncdf4::nc_open(input)
+  x = tryCatch(ncdf4::ncvar_get(nc, "temperature"), finally = ncdf4::nc_close(nc))
+  fixed = tempfile(fileext = ".nc")
+  on.exit(unlink(fixed), add = TRUE)
+  write_ncdf(x,
+    fixed,
+    "temperature",
+    dim = list(lon = seq(-80,
+    -65,
+    length.out = 15),
+    lat = seq(-25,
+    -6,
+    length.out = 20),
+    time = 0:30),
+    compression = NA)
+  nc_unlim(fixed, "time", output)
+})
 ```

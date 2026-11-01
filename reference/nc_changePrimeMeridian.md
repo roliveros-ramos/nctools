@@ -1,8 +1,8 @@
 # Change the prime meridian of a variable in a netCDF file
 
 Reorders the longitude dimension of a variable so that longitudes follow
-either the \`\[-180, 180\]\` convention or the \`\[0, 360\]\`
-convention, and writes the result to a netCDF file.
+either the `[-180, 180]` convention or the `[0, 360]` convention, and
+writes the result to a netCDF file.
 
 ## Usage
 
@@ -30,7 +30,7 @@ nc_changePrimeMeridian(
 - output:
 
   Optional character string giving the path to the output netCDF file.
-  If omitted, \`overwrite = TRUE\` must be used and the input file is
+  If omitted, `overwrite = TRUE` must be used and the input file is
   replaced.
 
 - varid:
@@ -47,16 +47,16 @@ nc_changePrimeMeridian(
 - primeMeridian:
 
   Character string specifying the target longitude convention. Use
-  \`"center"\` for longitudes in the \`\[-180, 180\]\` range and
-  \`"left"\` for longitudes in the \`\[0, 360\]\` range.
+  `"center"` for longitudes in the `[-180, 180]` range and `"left"` for
+  longitudes in the `[0, 360]` range.
 
 - verbose:
 
-  Logical. If \`TRUE\`, report progress while processing the variable.
+  Logical. If `TRUE`, report progress while processing the variable.
 
 - overwrite:
 
-  Logical. If \`TRUE\`, allow overwriting an existing output file,
+  Logical. If `TRUE`, allow overwriting an existing output file,
   including the input file itself.
 
 - compression:
@@ -72,12 +72,12 @@ nc_changePrimeMeridian(
 
 - ignore.case:
 
-  Logical. If \`TRUE\`, ignore case when matching \`varid\` or a
-  character \`MARGIN\`.
+  Logical. If `TRUE`, ignore case when matching `varid` or a character
+  `MARGIN`.
 
 ## Value
 
-Invisibly returns \`output\`.
+Invisibly returns `output`.
 
 ## Details
 
@@ -88,32 +88,23 @@ processed in memory. Otherwise, the variable is processed iteratively in
 chunks to reduce memory use.
 
 If the longitude values already follow the requested convention, the
-function returns with a warning. When \`output\` differs from
-\`filename\`, the input file is copied to \`output\` unchanged.
+function returns with a warning. When `output` differs from `filename`,
+the input file is copied to `output` unchanged.
 
 ## See also
 
-\[nc_subset()\], \[nc_apply()\]
+[`nc_subset()`](nc_subset.md), [`nc_apply()`](nc_apply.md)
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-nc_changePrimeMeridian(
-  filename = "input.nc",
-  output = "output.nc",
-  varid = "temp",
-  MARGIN = "lon",
-  primeMeridian = "center"
-)
-
-nc_changePrimeMeridian(
-  filename = "input.nc",
-  output = "output_pacific.nc",
-  varid = "temp",
-  MARGIN = 1,
-  primeMeridian = "left",
-  compression = 4
-)
-} # }
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  nc_changePrimeMeridian(input, output, varid = "temperature", primeMeridian = "left")
+})
 ```

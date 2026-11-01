@@ -1,8 +1,9 @@
 # Apply a function over margins of a netCDF variable
 
 Reads a variable from a netCDF file, applies a function over one or more
-of its dimensions using \[base::apply()\], and writes the result to a
-new netCDF file.
+of its dimensions using
+[`base::apply()`](https://rdrr.io/r/base/apply.html), and writes the
+result to a new netCDF file.
 
 ## Usage
 
@@ -41,7 +42,8 @@ nc_apply(
 - MARGIN:
 
   Integer or character vector specifying the dimensions to retain in the
-  output, as in \[base::apply()\]. Dimension names may be used.
+  output, as in [`base::apply()`](https://rdrr.io/r/base/apply.html).
+  Dimension names may be used.
 
 - FUN:
 
@@ -49,7 +51,7 @@ nc_apply(
 
 - ...:
 
-  Additional arguments passed to \`FUN\`.
+  Additional arguments passed to `FUN`.
 
 - output:
 
@@ -61,8 +63,8 @@ nc_apply(
 
 - newdim:
 
-  Optional numeric values for the dimension created when \`FUN\` returns
-  a vector of length greater than one.
+  Optional numeric values for the dimension created when `FUN` returns a
+  vector of length greater than one.
 
 - name:
 
@@ -72,8 +74,8 @@ nc_apply(
 - longname:
 
   Optional character string giving the long name of the output variable.
-  By default, a name based on \`FUN\` and the original variable long
-  name is generated.
+  By default, a name based on `FUN` and the original variable long name
+  is generated.
 
 - units:
 
@@ -94,49 +96,37 @@ nc_apply(
 
 - ignore.case:
 
-  Logical. If \`TRUE\`, ignore case when matching dimension names
-  supplied in \`MARGIN\`.
+  Logical. If `TRUE`, ignore case when matching dimension names supplied
+  in `MARGIN`.
 
 ## Value
 
-Invisibly returns \`output\`.
+Invisibly returns `output`.
 
 ## Details
 
 The selected variable is read into memory and processed with
-\[base::apply()\]. The output retains the dimensions specified in
-\`MARGIN\`. If \`FUN\` returns a vector of length greater than one, an
-additional dimension is appended to the result; its coordinate values
-are taken from \`newdim\` when provided, or generated automatically
-otherwise.
+[`base::apply()`](https://rdrr.io/r/base/apply.html). The output retains
+the dimensions specified in `MARGIN`. If `FUN` returns a vector of
+length greater than one, an additional dimension is appended to the
+result; its coordinate values are taken from `newdim` when provided, or
+generated automatically otherwise.
 
 ## See also
 
-\[nc_subset()\], \[write_ncdf()\], \[base::apply()\]
+[`nc_subset()`](nc_subset.md), [`write_ncdf()`](write_ncdf.md),
+[`base::apply()`](https://rdrr.io/r/base/apply.html)
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-## Mean over the time dimension
-nc_apply(
-  filename = "input.nc",
-  varid = "temp",
-  MARGIN = c("lon", "lat"),
-  FUN = mean,
-  na.rm = TRUE,
-  output = "temp_mean.nc"
-)
-
-## Quantiles over the depth dimension
-nc_apply(
-  filename = "input.nc",
-  varid = "temp",
-  MARGIN = c("lon", "lat"),
-  FUN = quantile,
-  probs = c(0.25, 0.5, 0.75),
-  newdim = c(25, 50, 75),
-  output = "temp_quantiles.nc"
-)
-} # }
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  nc_apply(input, "temperature", MARGIN = "time", FUN = mean, na.rm = TRUE, output = output)
+})
 ```

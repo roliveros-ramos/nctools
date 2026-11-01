@@ -30,47 +30,48 @@ nc_rename(
 - newnames:
 
   Character vector with the replacement names. Must be in the same order
-  and of the same length as \`oldnames\`.
+  and of the same length as `oldnames`.
 
 - output:
 
   Optional character string giving the path to the output file. If
-  omitted, \`overwrite = TRUE\` must be used and the original file is
+  omitted, `overwrite = TRUE` must be used and the original file is
   replaced.
 
 - verbose:
 
-  Logical. If \`TRUE\`, print the renaming operations performed.
+  Logical. If `TRUE`, print the renaming operations performed.
 
 - overwrite:
 
-  Logical. If \`TRUE\`, allow overwriting an existing output file. Use
+  Logical. If `TRUE`, allow overwriting an existing output file. Use
   this when modifying the original file in place.
 
 ## Value
 
-Invisibly returns the path to the modified file, or \`NULL\` invisibly
-if nothing was changed.
+Invisibly returns the path to the modified file, or `NULL` invisibly if
+nothing was changed.
 
 ## Details
 
-Names in \`oldnames\` that do not match either a variable or a dimension
+Names in `oldnames` that do not match either a variable or a dimension
 in the file are ignored with a warning. If none of the requested names
 are found, the function exits without making changes.
 
 ## See also
 
-\[nc_extract()\], \[write_ncdf()\]
+[`nc_extract()`](nc_extract.md), [`write_ncdf()`](write_ncdf.md)
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-nc_rename(
-  filename = "input.nc",
-  oldnames = c("lon", "lat", "temp"),
-  newnames = c("longitude", "latitude", "temperature"),
-  output = "renamed.nc"
-)
-} # }
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  nc_rename(input, "temperature", "temp", output = output)
+})
 ```

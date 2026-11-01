@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nctools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,13 +57,13 @@ unlimited.</p></dd>
 
 <dt id="arg-output">output<a class="anchor" aria-label="anchor" href="#arg-output"></a></dt>
 <dd><p>Optional character string giving the path to the output file.
-If `NULL`, the input file is replaced.</p></dd>
+If <code>NULL</code>, the input file is replaced.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Invisibly returns the list of variable definitions used to create the
-  new file.</p>
+new file.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -73,18 +73,35 @@ the variable values to the new file.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>[nc_rcat()], [write_ncdf()]</p></div>
+    <div class="dont-index"><p><code><a href="nc_rcat.html">nc_rcat()</a></code>, <code><a href="write_ncdf.html">write_ncdf()</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="fu">nc_unlim</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  filename <span class="op">=</span> <span class="st">"input.nc"</span>,</span></span>
-<span class="r-in"><span>  unlim <span class="op">=</span> <span class="st">"time"</span>,</span></span>
-<span class="r-in"><span>  output <span class="op">=</span> <span class="st">"time_unlimited.nc"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">local</a></span><span class="op">(</span><span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">input</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"temperature_2001_01.nc"</span>,</span></span>
+<span class="r-in"><span>    package <span class="op">=</span> <span class="st">"nctools"</span>,</span></span>
+<span class="r-in"><span>    mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">output</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".nc"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">output</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">nc</span> <span class="op">=</span> <span class="fu">ncdf4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncdf4/man/nc_open.html" class="external-link">nc_open</a></span><span class="op">(</span><span class="va">input</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">x</span> <span class="op">=</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="fu">ncdf4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncdf4/man/ncvar_get.html" class="external-link">ncvar_get</a></span><span class="op">(</span><span class="va">nc</span>, <span class="st">"temperature"</span><span class="op">)</span>, finally <span class="op">=</span> <span class="fu">ncdf4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncdf4/man/nc_close.html" class="external-link">nc_close</a></span><span class="op">(</span><span class="va">nc</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">fixed</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".nc"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">fixed</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="write_ncdf.html">write_ncdf</a></span><span class="op">(</span><span class="va">x</span>,</span></span>
+<span class="r-in"><span>    <span class="va">fixed</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"temperature"</span>,</span></span>
+<span class="r-in"><span>    dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>lon <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">80</span>,</span></span>
+<span class="r-in"><span>    <span class="op">-</span><span class="fl">65</span>,</span></span>
+<span class="r-in"><span>    length.out <span class="op">=</span> <span class="fl">15</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    lat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">25</span>,</span></span>
+<span class="r-in"><span>    <span class="op">-</span><span class="fl">6</span>,</span></span>
+<span class="r-in"><span>    length.out <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    time <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">30</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    compression <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">nc_unlim</span><span class="op">(</span><span class="va">fixed</span>, <span class="st">"time"</span>, <span class="va">output</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

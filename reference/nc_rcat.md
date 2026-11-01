@@ -26,26 +26,36 @@ nc_rcat(filenames, varid, output)
 
 ## Value
 
-Invisibly returns \`output\`.
+Invisibly returns `output`.
 
 ## Details
 
 All files must contain the selected variable and must be compatible in
 all non-unlimited dimensions. The unlimited dimension is appended in the
-order given by \`filenames\`.
+order given by `filenames`.
 
 ## See also
 
-\[nc_unlim()\], \[write_ncdf()\]
+[`nc_unlim()`](nc_unlim.md), [`write_ncdf()`](write_ncdf.md)
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-nc_rcat(
-  filenames = c("part1.nc", "part2.nc", "part3.nc"),
-  varid = "temp",
-  output = "combined.nc"
-)
-} # }
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  files = system.file("extdata",
+    sprintf("temperature_2001_%02d.nc",
+    1:3),
+    package = "nctools",
+    mustWork = TRUE)
+  first = tempfile(fileext = ".nc")
+  on.exit(unlink(first), add = TRUE)
+  nc_rcat(files[1:2], "temperature", first)
+  nc_rcat(c(first, files[3]), "temperature", output)
+})
 ```
