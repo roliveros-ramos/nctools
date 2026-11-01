@@ -10,25 +10,24 @@ findPrimeMeridian(x)
 \item{x}{Numeric vector of longitude values.}
 }
 \value{
-A character string, either `"center"` or `"left"`, or `NULL` if the
-  convention cannot be determined.
+A character string, either \code{"center"} or \code{"left"}, or \code{NULL} if the
+convention cannot be determined.
 }
 \description{
-Infers whether a longitude vector is expressed using the `[-180, 180]`
-convention or the `[0, 360]` convention.
+Infers whether a longitude vector is expressed using the \verb{[-180, 180]}
+convention or the \verb{[0, 360]} convention.
 }
 \details{
-The function returns `"center"` if any longitude is negative, and `"left"`
-if any longitude is greater than `180`. If neither condition is met, the
+The function returns \code{"center"} if any longitude is negative, and \code{"left"}
+if any longitude is greater than \code{180}. If neither condition is met, the
 convention cannot be determined unambiguously and the function returns
-`NULL` with a warning.
+\code{NULL} with a warning.
 }
 \examples{
-\dontrun{
-findPrimeMeridian(c(-10, 0, 20))
-findPrimeMeridian(c(10, 180, 350))
-}
+local({
+  findPrimeMeridian(c(-80, -70, -60))
+})
 }
 \seealso{
-[checkLongitude()]
+\code{\link[=checkLongitude]{checkLongitude()}}
 }

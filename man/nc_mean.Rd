@@ -53,14 +53,14 @@ nc_max(
 missing and the file contains a single variable, that variable is used.}
 
 \item{MARGIN}{Integer or character vector specifying the dimensions to retain
-in the output, as in [base::apply()]. Dimension names may be used.}
+in the output, as in \code{\link[base:apply]{base::apply()}}. Dimension names may be used.}
 
-\item{na.rm}{Logical. If `TRUE`, missing values are removed before computing
+\item{na.rm}{Logical. If \code{TRUE}, missing values are removed before computing
 the statistic.}
 
 \item{trim}{Numeric scalar giving the fraction of observations to be trimmed
-from each end before computing the mean. Passed to [base::mean()]. Used
-only by `nc_mean()`.}
+from each end before computing the mean. Passed to \code{\link[base:mean]{base::mean()}}. Used
+only by \code{nc_mean()}.}
 
 \item{output}{Character string giving the path to the output netCDF file to
 create.}
@@ -74,51 +74,34 @@ variable.}
 
 \item{force_v4}{Logical. Currently unused internally.}
 
-\item{ignore.case}{Logical. If `TRUE`, ignore case when matching dimension
-names supplied in `MARGIN`.}
+\item{ignore.case}{Logical. If \code{TRUE}, ignore case when matching dimension
+names supplied in \code{MARGIN}.}
 }
 \value{
-Invisibly returns `output`.
+Invisibly returns \code{output}.
 }
 \description{
 Applies a summary function to a variable in a netCDF file over the
-dimensions not listed in `MARGIN`, and writes the result to a new netCDF
+dimensions not listed in \code{MARGIN}, and writes the result to a new netCDF
 file.
 }
 \details{
-`nc_mean()` applies [base::mean()], `nc_min()` applies [base::min()], and
-`nc_max()` applies [base::max()].
+\code{nc_mean()} applies \code{\link[base:mean]{base::mean()}}, \code{nc_min()} applies \code{\link[base:min]{base::min()}}, and
+\code{nc_max()} applies \code{\link[base:max]{base::max()}}.
 
-
-The output retains the dimensions specified in `MARGIN`.
+The output retains the dimensions specified in \code{MARGIN}.
 }
 \examples{
-\dontrun{
-nc_mean(
-  filename = "input.nc",
-  varid = "temp",
-  MARGIN = c("lon", "lat"),
-  na.rm = TRUE,
-  output = "temp_mean.nc"
-)
-
-nc_min(
-  filename = "input.nc",
-  varid = "temp",
-  MARGIN = c("lon", "lat"),
-  na.rm = TRUE,
-  output = "temp_min.nc"
-)
-
-nc_max(
-  filename = "input.nc",
-  varid = "temp",
-  MARGIN = c("lon", "lat"),
-  na.rm = TRUE,
-  output = "temp_max.nc"
-)
-}
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  nc_mean(input, "temperature", MARGIN = c("lon", "lat"), output = output)
+})
 }
 \seealso{
-[nc_apply()], [base::mean()], [base::min()], [base::max()]
+\code{\link[=nc_apply]{nc_apply()}}, \code{\link[base:mean]{base::mean()}}, \code{\link[base:min]{base::min()}}, \code{\link[base:max]{base::max()}}
 }

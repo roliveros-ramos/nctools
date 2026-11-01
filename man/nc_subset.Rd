@@ -31,44 +31,43 @@ the output file. By default, the original variable name is used.}
 \item{compression}{Optional numeric compression level for the output
 variable. Supplying this typically requires netCDF4 output.}
 
-\item{force_v4}{Logical. If `TRUE`, force creation of a netCDF4 output file.}
+\item{force_v4}{Logical. If \code{TRUE}, force creation of a netCDF4 output file.}
 
 \item{...}{Named bounds for dimensions to subset. Each argument name must
 match a dimension name. Values should be numeric vectors of length two
 giving lower and upper bounds. A length-one value is treated as an exact
-coordinate and expanded internally to `c(x, x)`.}
+coordinate and expanded internally to \code{c(x, x)}.}
 
-\item{ignore.case}{Logical. If `TRUE`, ignore case when matching dimension
-names supplied in `...`.}
+\item{ignore.case}{Logical. If \code{TRUE}, ignore case when matching dimension
+names supplied in \code{...}.}
 
-\item{drop}{Logical. If `TRUE`, drop dimensions of length one in the output.}
+\item{drop}{Logical. If \code{TRUE}, drop dimensions of length one in the output.}
 }
 \value{
-Invisibly returns `output`, or `NULL` invisibly if none of the
-  supplied dimension names match the variable dimensions.
+Invisibly returns \code{output}, or \code{NULL} invisibly if none of the
+supplied dimension names match the variable dimensions.
 }
 \description{
 Extracts a subset of a variable from a netCDF file using coordinate bounds
 supplied for one or more dimensions, and writes the result to a new file.
 }
 \details{
-Only dimensions named in `...` are subset; all others are kept in full. The
+Only dimensions named in \code{...} are subset; all others are kept in full. The
 output file contains the subsetted variable, with updated dimension values.
 Global attributes from the source file are copied to the output file, and the
-global `history` attribute is updated with the function call.
+global \code{history} attribute is updated with the function call.
 }
 \examples{
-\dontrun{
-nc_subset(
-  filename = "input.nc",
-  varid = "temp",
-  output = "subset.nc",
-  lon = c(-80, -70),
-  lat = c(-20, -10),
-  depth = c(0, 100)
-)
-}
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  nc_subset(input, "temperature", output, lon = c(-75, -70), lat = c(-20, -10))
+})
 }
 \seealso{
-[nc_extract()], [write_ncdf()]
+\code{\link[=nc_extract]{nc_extract()}}, \code{\link[=write_ncdf]{write_ncdf()}}
 }

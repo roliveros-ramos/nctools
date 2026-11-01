@@ -7,10 +7,10 @@
 ncvar_change_compression(nc, varid = NA, compression)
 }
 \arguments{
-\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
+\item{nc}{An open netCDF connection created with \code{\link[ncdf4:nc_open]{ncdf4::nc_open()}}.}
 
 \item{varid}{Variable identifier. This can be a character string giving the
-variable name, or an object of class `ncvar4`. If `NA`, the compression
+variable name, or an object of class \code{ncvar4}. If \code{NA}, the compression
 setting is changed for all variables in the file.}
 
 \item{compression}{Numeric compression level to assign.}
@@ -23,13 +23,20 @@ Modifies the compression setting of one or more variables in an open netCDF
 object.
 }
 \examples{
-\dontrun{
-nc <- ncdf4::nc_open("input.nc")
-on.exit(ncdf4::nc_close(nc))
-
-nc <- ncvar_change_compression(nc, varid = "temp", compression = 4)
-}
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  copy = tempfile(fileext = ".nc")
+  file.copy(input, copy)
+  nc = ncdf4::nc_open(copy, write = TRUE)
+  on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+  nc = ncvar_change_compression(nc, compression = 4)
+  ncvar_compression(nc)
+  # This changes the in-memory definition, not the stored data.
+})
 }
 \seealso{
-[ncvar_compression()]
+\code{\link[=ncvar_compression]{ncvar_compression()}}
 }

@@ -7,14 +7,14 @@
 ncvar_compression(nc, varid = NA)
 }
 \arguments{
-\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
+\item{nc}{An open netCDF connection created with \code{\link[ncdf4:nc_open]{ncdf4::nc_open()}}.}
 
 \item{varid}{Variable identifier. This can be a character string giving the
-variable name, or an object of class `ncvar4`. If `NA`, compression
+variable name, or an object of class \code{ncvar4}. If \code{NA}, compression
 settings are returned for all variables in the file.}
 }
 \value{
-If `varid` is `NA`, a named vector or list with the compression setting of
+If \code{varid} is \code{NA}, a named vector or list with the compression setting of
 each variable. Otherwise, the compression setting of the selected variable.
 }
 \description{
@@ -22,14 +22,18 @@ Returns the compression setting of one variable, or of all variables, in an
 open netCDF file.
 }
 \examples{
-\dontrun{
-nc <- ncdf4::nc_open("input.nc")
-on.exit(ncdf4::nc_close(nc))
-
-ncvar_compression(nc)
-ncvar_compression(nc, varid = "temp")
-}
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  copy = tempfile(fileext = ".nc")
+  file.copy(input, copy)
+  nc = ncdf4::nc_open(copy, write = TRUE)
+  on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+  ncvar_compression(nc)
+})
 }
 \seealso{
-[ncvar_change_compression()]
+\code{\link[=ncvar_change_compression]{ncvar_change_compression()}}
 }

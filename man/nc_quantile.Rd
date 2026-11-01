@@ -25,13 +25,13 @@ nc_quantile(
 missing and the file contains a single variable, that variable is used.}
 
 \item{MARGIN}{Integer or character vector specifying the dimensions to retain
-in the output, as in [base::apply()]. Dimension names may be used.}
+in the output, as in \code{\link[base:apply]{base::apply()}}. Dimension names may be used.}
 
-\item{na.rm}{Logical. If `TRUE`, missing values are removed before computing
+\item{na.rm}{Logical. If \code{TRUE}, missing values are removed before computing
 the quantiles.}
 
-\item{probs}{Numeric vector of probabilities in `[0, 1]` passed to
-[stats::quantile()].}
+\item{probs}{Numeric vector of probabilities in \verb{[0, 1]} passed to
+\code{\link[stats:quantile]{stats::quantile()}}.}
 
 \item{output}{Character string giving the path to the output netCDF file to
 create.}
@@ -45,32 +45,32 @@ variable.}
 
 \item{force_v4}{Logical. Currently unused internally.}
 
-\item{ignore.case}{Logical. If `TRUE`, ignore case when matching dimension
-names supplied in `MARGIN`.}
+\item{ignore.case}{Logical. If \code{TRUE}, ignore case when matching dimension
+names supplied in \code{MARGIN}.}
 }
 \value{
-Invisibly returns `output`.
+Invisibly returns \code{output}.
 }
 \description{
-Applies [stats::quantile()] to a variable in a netCDF file over the
-dimensions not listed in `MARGIN`, and writes the result to a new netCDF
+Applies \code{\link[stats:quantile]{stats::quantile()}} to a variable in a netCDF file over the
+dimensions not listed in \code{MARGIN}, and writes the result to a new netCDF
 file.
 }
 \details{
-The output retains the dimensions specified in `MARGIN`. An additional
-dimension is appended to store the quantiles defined by `probs`.
+The output retains the dimensions specified in \code{MARGIN}. An additional
+dimension is appended to store the quantiles defined by \code{probs}.
 }
 \examples{
-\dontrun{
-nc_quantile(
-  filename = "input.nc",
-  varid = "temp",
-  MARGIN = c("lon", "lat"),
-  probs = c(0.1, 0.5, 0.9),
-  output = "temp_quantiles.nc"
-)
-}
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  nc_quantile(input, "temperature", MARGIN = c("lon", "lat"), output = output)
+})
 }
 \seealso{
-[nc_apply()], [stats::quantile()]
+\code{\link[=nc_apply]{nc_apply()}}, \code{\link[stats:quantile]{stats::quantile()}}
 }

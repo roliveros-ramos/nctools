@@ -17,7 +17,7 @@ possible.}
 create.}
 }
 \value{
-Invisibly returns `output`.
+Invisibly returns \code{output}.
 }
 \description{
 Concatenates the records of the same variable from multiple netCDF files
@@ -26,17 +26,27 @@ along the unlimited dimension and writes the result to a new file.
 \details{
 All files must contain the selected variable and must be compatible in all
 non-unlimited dimensions. The unlimited dimension is appended in the order
-given by `filenames`.
+given by \code{filenames}.
 }
 \examples{
-\dontrun{
-nc_rcat(
-  filenames = c("part1.nc", "part2.nc", "part3.nc"),
-  varid = "temp",
-  output = "combined.nc"
-)
-}
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  files = system.file("extdata",
+    sprintf("temperature_2001_\%02d.nc",
+    1:3),
+    package = "nctools",
+    mustWork = TRUE)
+  first = tempfile(fileext = ".nc")
+  on.exit(unlink(first), add = TRUE)
+  nc_rcat(files[1:2], "temperature", first)
+  nc_rcat(c(first, files[3]), "temperature", output)
+})
 }
 \seealso{
-[nc_unlim()], [write_ncdf()]
+\code{\link[=nc_unlim]{nc_unlim()}}, \code{\link[=write_ncdf]{write_ncdf()}}
 }

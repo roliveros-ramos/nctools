@@ -25,7 +25,7 @@
 \item{dim}{Character string giving the dimension name to modify.}
 
 \item{id}{Character string giving the component of the dimension object to
-replace, for example `"name"`.}
+replace, for example \code{"name"}.}
 
 \item{value}{Replacement value for the selected component.}
 
@@ -34,58 +34,58 @@ replace, for example `"name"`.}
 \item{oldname}{Character vector giving the existing dimension names.}
 
 \item{newname}{Character vector giving the replacement dimension names. Must
-have the same length and order as `oldname`.}
+have the same length and order as \code{oldname}.}
 
 \item{output}{Character string giving the path to the output netCDF file.}
 
-\item{verbose}{Logical. If `TRUE`, report progress while rewriting the file.}
+\item{verbose}{Logical. If \code{TRUE}, report progress while rewriting the file.}
 
 \item{varid}{Variable identifier supplied by the user. This can be a
-character string, an object of class `ncvar4`, or `NA`/missing when the
+character string, an object of class \code{ncvar4}, or \code{NA}/missing when the
 file contains a single variable.}
 
-\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
+\item{nc}{An open netCDF connection created with \code{\link[ncdf4:nc_open]{ncdf4::nc_open()}}.}
 
 \item{dimsize}{Numeric vector giving the target dimension sizes.}
 }
 \value{
 A modified variable definition object.
 
-Invisibly returns `output`.
+Invisibly returns \code{output}.
 
-Invisibly returns `output`.
+Invisibly returns \code{output}.
 
 A validated variable name as a character string.
 
 An integer vector giving the matched dimension positions.
 }
 \description{
-Developer-facing helper functions used internally by `nctools` for variable
+Developer-facing helper functions used internally by \code{nctools} for variable
 validation, dimension matching, and renaming variables or dimensions in
 netCDF files.
 
-`.replaceInDim()` replaces one component of a named dimension inside a
+\code{.replaceInDim()} replaces one component of a named dimension inside a
 variable definition.
 
-`.nc_renameDim()` rewrites a netCDF file with one or more dimensions
+\code{.nc_renameDim()} rewrites a netCDF file with one or more dimensions
 renamed.
 
-`.nc_renameVar()` renames one or more variables in a netCDF file.
+\code{.nc_renameVar()} renames one or more variables in a netCDF file.
 
-`.checkVarid()` validates a variable identifier against an open netCDF file
+\code{.checkVarid()} validates a variable identifier against an open netCDF file
 and resolves the default variable when the file contains a single variable.
 
-`.getDimensions()` matches the dimensions of an array to a target netCDF
+\code{.getDimensions()} matches the dimensions of an array to a target netCDF
 dimension-size vector.
 }
 \details{
 These functions are not part of the public API and may change without notice.
 
-The file is rebuilt from the variable definitions in `filename`, with the
+The file is rebuilt from the variable definitions in \code{filename}, with the
 requested dimensions renamed before writing the output file.
 
-If `output` differs from `filename`, the input file is first copied to
-`output`, and the renaming is applied there.
+If \code{output} differs from \code{filename}, the input file is first copied to
+\code{output}, and the renaming is applied there.
 
 Matching is based on dimension lengths. When more than one candidate match
 exists, the first match is used.

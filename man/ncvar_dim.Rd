@@ -7,20 +7,20 @@
 ncvar_dim(nc, varid = NULL, value = FALSE)
 }
 \arguments{
-\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
+\item{nc}{An open netCDF connection created with \code{\link[ncdf4:nc_open]{ncdf4::nc_open()}}.}
 
 \item{varid}{Variable identifier. This can be a character string giving the
-variable name, or an object of class `ncvar4`. If `NULL`, dimensions are
+variable name, or an object of class \code{ncvar4}. If \code{NULL}, dimensions are
 returned for all variables in the file.}
 
-\item{value}{Logical. If `TRUE`, return the coordinate values of each
+\item{value}{Logical. If \code{TRUE}, return the coordinate values of each
 dimension instead of only the dimension names.}
 }
 \value{
-If `varid` is `NULL`, a named list with one element per variable. If `varid`
+If \code{varid} is \code{NULL}, a named list with one element per variable. If \code{varid}
 is supplied, the dimensions of the selected variable only. When
-`value = FALSE`, dimensions are returned as character vectors of dimension
-names. When `value = TRUE`, dimensions are returned as named lists of
+\code{value = FALSE}, dimensions are returned as character vectors of dimension
+names. When \code{value = TRUE}, dimensions are returned as named lists of
 coordinate values.
 }
 \description{
@@ -28,15 +28,18 @@ Returns the dimensions associated with one variable, or with all variables in
 an open netCDF file.
 }
 \examples{
-\dontrun{
-nc <- ncdf4::nc_open("input.nc")
-on.exit(ncdf4::nc_close(nc))
-
-ncvar_dim(nc)
-ncvar_dim(nc, varid = "temp")
-ncvar_dim(nc, varid = "temp", value = TRUE)
-}
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  copy = tempfile(fileext = ".nc")
+  file.copy(input, copy)
+  nc = ncdf4::nc_open(copy, write = TRUE)
+  on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+  ncvar_dim(nc)
+})
 }
 \seealso{
-[ncvar_size()], [ncdim_size()], [ncdf4::nc_open()]
+\code{\link[=ncvar_size]{ncvar_size()}}, \code{\link[=ncdim_size]{ncdim_size()}}, \code{\link[ncdf4:nc_open]{ncdf4::nc_open()}}
 }

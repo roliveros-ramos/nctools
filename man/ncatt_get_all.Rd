@@ -7,10 +7,10 @@
 ncatt_get_all(nc, type = c("var", "dim"))
 }
 \arguments{
-\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
+\item{nc}{An open netCDF connection created with \code{\link[ncdf4:nc_open]{ncdf4::nc_open()}}.}
 
 \item{type}{Character string indicating whether to return attributes for
-variables (`"var"`) or dimensions (`"dim"`).}
+variables (\code{"var"}) or dimensions (\code{"dim"}).}
 }
 \value{
 A named list of attribute lists.
@@ -20,14 +20,18 @@ Returns all attributes associated with variables or dimensions in an open
 netCDF file.
 }
 \examples{
-\dontrun{
-nc <- ncdf4::nc_open("input.nc")
-on.exit(ncdf4::nc_close(nc))
-
-ncatt_get_all(nc, type = "var")
-ncatt_get_all(nc, type = "dim")
-}
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  copy = tempfile(fileext = ".nc")
+  file.copy(input, copy)
+  nc = ncdf4::nc_open(copy, write = TRUE)
+  on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+  ncatt_get_all(nc)
+})
 }
 \seealso{
-[ncatt_put_all()], [ncdf4::ncatt_get()]
+\code{\link[=ncatt_put_all]{ncatt_put_all()}}, \code{\link[ncdf4:ncatt_get]{ncdf4::ncatt_get()}}
 }

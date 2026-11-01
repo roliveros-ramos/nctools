@@ -20,40 +20,41 @@ nc_rename(
 dimensions to rename.}
 
 \item{newnames}{Character vector with the replacement names. Must be in the
-same order and of the same length as `oldnames`.}
+same order and of the same length as \code{oldnames}.}
 
 \item{output}{Optional character string giving the path to the output file.
-If omitted, `overwrite = TRUE` must be used and the original file is
+If omitted, \code{overwrite = TRUE} must be used and the original file is
 replaced.}
 
-\item{verbose}{Logical. If `TRUE`, print the renaming operations performed.}
+\item{verbose}{Logical. If \code{TRUE}, print the renaming operations performed.}
 
-\item{overwrite}{Logical. If `TRUE`, allow overwriting an existing output
+\item{overwrite}{Logical. If \code{TRUE}, allow overwriting an existing output
 file. Use this when modifying the original file in place.}
 }
 \value{
-Invisibly returns the path to the modified file, or `NULL`
-  invisibly if nothing was changed.
+Invisibly returns the path to the modified file, or \code{NULL}
+invisibly if nothing was changed.
 }
 \description{
 Renames one or more variables and/or dimensions in an existing netCDF file,
 optionally writing the result to a new file.
 }
 \details{
-Names in `oldnames` that do not match either a variable or a dimension in the
+Names in \code{oldnames} that do not match either a variable or a dimension in the
 file are ignored with a warning. If none of the requested names are found,
 the function exits without making changes.
 }
 \examples{
-\dontrun{
-nc_rename(
-  filename = "input.nc",
-  oldnames = c("lon", "lat", "temp"),
-  newnames = c("longitude", "latitude", "temperature"),
-  output = "renamed.nc"
-)
-}
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  nc_rename(input, "temperature", "temp", output = output)
+})
 }
 \seealso{
-[nc_extract()], [write_ncdf()]
+\code{\link[=nc_extract]{nc_extract()}}, \code{\link[=write_ncdf]{write_ncdf()}}
 }

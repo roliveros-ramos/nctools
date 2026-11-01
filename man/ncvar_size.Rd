@@ -7,30 +7,35 @@
 ncvar_size(nc, varid = NULL)
 }
 \arguments{
-\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
+\item{nc}{An open netCDF connection created with \code{\link[ncdf4:nc_open]{ncdf4::nc_open()}}.}
 
 \item{varid}{Variable identifier. This can be a character string giving the
-variable name, or an object of class `ncvar4`. If `NULL`, dimensions are
+variable name, or an object of class \code{ncvar4}. If \code{NULL}, dimensions are
 returned for all variables in the file.}
 }
 \value{
 A numeric vector giving the dimension sizes of the selected variable.
-  If the file contains a single variable, that variable is used by default.
+If the file contains a single variable, that variable is used by default.
 }
 \description{
 Returns the dimension sizes of a selected variable in an open netCDF file.
 }
 \details{
-If the file contains more than one variable, `varid` must be supplied.
+If the file contains more than one variable, \code{varid} must be supplied.
 }
 \examples{
-\dontrun{
-nc <- ncdf4::nc_open("input.nc")
-on.exit(ncdf4::nc_close(nc))
-
-ncvar_size(nc, varid = "temp")
-}
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  copy = tempfile(fileext = ".nc")
+  file.copy(input, copy)
+  nc = ncdf4::nc_open(copy, write = TRUE)
+  on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+  ncvar_size(nc)
+})
 }
 \seealso{
-[ncvar_dim()], [ncdim_size()]
+\code{\link[=ncvar_dim]{ncvar_dim()}}, \code{\link[=ncdim_size]{ncdim_size()}}
 }

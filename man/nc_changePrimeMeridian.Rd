@@ -21,7 +21,7 @@ nc_changePrimeMeridian(
 \item{filename}{Character string giving the path to the input netCDF file.}
 
 \item{output}{Optional character string giving the path to the output
-netCDF file. If omitted, `overwrite = TRUE` must be used and the input file
+netCDF file. If omitted, \code{overwrite = TRUE} must be used and the input file
 is replaced.}
 
 \item{varid}{Variable identifier. This can be a character string giving the
@@ -32,13 +32,13 @@ variable is used.}
 longitude dimension. This can be either the dimension index or its name.}
 
 \item{primeMeridian}{Character string specifying the target longitude
-convention. Use `"center"` for longitudes in the `[-180, 180]` range and
-`"left"` for longitudes in the `[0, 360]` range.}
+convention. Use \code{"center"} for longitudes in the \verb{[-180, 180]} range and
+\code{"left"} for longitudes in the \verb{[0, 360]} range.}
 
-\item{verbose}{Logical. If `TRUE`, report progress while processing the
+\item{verbose}{Logical. If \code{TRUE}, report progress while processing the
 variable.}
 
-\item{overwrite}{Logical. If `TRUE`, allow overwriting an existing output
+\item{overwrite}{Logical. If \code{TRUE}, allow overwriting an existing output
 file, including the input file itself.}
 
 \item{compression}{Optional numeric compression level for the output
@@ -48,15 +48,15 @@ variable. Supplying this typically requires netCDF4 output.}
 processing large variables. If the variable exceeds this limit, it is
 reordered iteratively in chunks.}
 
-\item{ignore.case}{Logical. If `TRUE`, ignore case when matching `varid` or
-a character `MARGIN`.}
+\item{ignore.case}{Logical. If \code{TRUE}, ignore case when matching \code{varid} or
+a character \code{MARGIN}.}
 }
 \value{
-Invisibly returns `output`.
+Invisibly returns \code{output}.
 }
 \description{
 Reorders the longitude dimension of a variable so that longitudes follow
-either the `[-180, 180]` convention or the `[0, 360]` convention, and writes
+either the \verb{[-180, 180]} convention or the \verb{[0, 360]} convention, and writes
 the result to a netCDF file.
 }
 \details{
@@ -67,29 +67,20 @@ memory. Otherwise, the variable is processed iteratively in chunks to reduce
 memory use.
 
 If the longitude values already follow the requested convention, the function
-returns with a warning. When `output` differs from `filename`, the input file
-is copied to `output` unchanged.
+returns with a warning. When \code{output} differs from \code{filename}, the input file
+is copied to \code{output} unchanged.
 }
 \examples{
-\dontrun{
-nc_changePrimeMeridian(
-  filename = "input.nc",
-  output = "output.nc",
-  varid = "temp",
-  MARGIN = "lon",
-  primeMeridian = "center"
-)
-
-nc_changePrimeMeridian(
-  filename = "input.nc",
-  output = "output_pacific.nc",
-  varid = "temp",
-  MARGIN = 1,
-  primeMeridian = "left",
-  compression = 4
-)
-}
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  nc_changePrimeMeridian(input, output, varid = "temperature", primeMeridian = "left")
+})
 }
 \seealso{
-[nc_subset()], [nc_apply()]
+\code{\link[=nc_subset]{nc_subset()}}, \code{\link[=nc_apply]{nc_apply()}}
 }

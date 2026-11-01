@@ -16,21 +16,23 @@ missing and the file contains a single variable, that variable is used.}
 create.}
 }
 \value{
-Invisibly returns `output`.
+Invisibly returns \code{output}.
 }
 \description{
 Creates a new netCDF file containing a single variable copied from an
 existing file.
 }
 \examples{
-\dontrun{
-nc_extract(
-  filename = "input.nc",
-  varid = "temp",
-  output = "temp_only.nc"
-)
-}
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  nc_extract(input, "temperature", output)
+})
 }
 \seealso{
-[write_ncdf()], [nc_subset()], [nc_apply()]
+\code{\link[=write_ncdf]{write_ncdf()}}, \code{\link[=nc_subset]{nc_subset()}}, \code{\link[=nc_apply]{nc_apply()}}
 }

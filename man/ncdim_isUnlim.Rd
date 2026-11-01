@@ -7,23 +7,28 @@
 ncdim_isUnlim(nc)
 }
 \arguments{
-\item{nc}{An open netCDF connection created with [ncdf4::nc_open()].}
+\item{nc}{An open netCDF connection created with \code{\link[ncdf4:nc_open]{ncdf4::nc_open()}}.}
 }
 \value{
 A named logical vector indicating whether each dimension is
-  unlimited.
+unlimited.
 }
 \description{
 Returns whether each dimension in an open netCDF file is unlimited.
 }
 \examples{
-\dontrun{
-nc <- ncdf4::nc_open("input.nc")
-on.exit(ncdf4::nc_close(nc))
-
-ncdim_isUnlim(nc)
-}
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  copy = tempfile(fileext = ".nc")
+  file.copy(input, copy)
+  nc = ncdf4::nc_open(copy, write = TRUE)
+  on.exit({ ncdf4::nc_close(nc); unlink(copy) }, add = TRUE)
+  ncdim_isUnlim(nc)
+})
 }
 \seealso{
-[ncdim_size()]
+\code{\link[=ncdim_size]{ncdim_size()}}
 }

@@ -10,34 +10,30 @@ checkLongitude(x, primeMeridian = "center", sort = FALSE, ...)
 \item{x}{Numeric vector of longitude values.}
 
 \item{primeMeridian}{Character string specifying the target longitude
-convention. Use `"center"` for longitudes in the `[-180, 180]` range and
-`"left"` for longitudes in the `[0, 360]` range.}
+convention. Use \code{"center"} for longitudes in the \verb{[-180, 180]} range and
+\code{"left"} for longitudes in the \verb{[0, 360]} range.}
 
-\item{sort}{Logical. If `TRUE`, sort the output values after conversion.}
+\item{sort}{Logical. If \code{TRUE}, sort the output values after conversion.}
 
 \item{...}{Additional arguments. Currently unused.}
 }
 \value{
 A numeric vector of longitude values expressed in the requested
-  convention.
+convention.
 }
 \description{
-Converts longitude values to either the `[-180, 180]` convention or the
-`[0, 360]` convention.
+Converts longitude values to either the \verb{[-180, 180]} convention or the
+\verb{[0, 360]} convention.
 }
 \details{
-Longitude values are modified only when needed. For `primeMeridian =
-"center"`, values greater than `180` are shifted by subtracting `360`. For
-`primeMeridian = "left"`, negative values are shifted by adding `360`.
+Longitude values are modified only when needed. For \code{primeMeridian = "center"}, values greater than \code{180} are shifted by subtracting \code{360}. For
+\code{primeMeridian = "left"}, negative values are shifted by adding \code{360}.
 }
 \examples{
-\dontrun{
-lon <- c(170, 180, 190, 350)
-
-checkLongitude(lon, primeMeridian = "center")
-checkLongitude(lon, primeMeridian = "left")
-}
+local({
+  checkLongitude(c(-80, -70, -60), primeMeridian = "left")
+})
 }
 \seealso{
-[findPrimeMeridian()]
+\code{\link[=findPrimeMeridian]{findPrimeMeridian()}}
 }

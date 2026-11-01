@@ -29,25 +29,25 @@ nc_apply(
 missing and the file contains a single variable, that variable is used.}
 
 \item{MARGIN}{Integer or character vector specifying the dimensions to retain
-in the output, as in [base::apply()]. Dimension names may be used.}
+in the output, as in \code{\link[base:apply]{base::apply()}}. Dimension names may be used.}
 
 \item{FUN}{Function to apply.}
 
-\item{...}{Additional arguments passed to `FUN`.}
+\item{...}{Additional arguments passed to \code{FUN}.}
 
 \item{output}{Character string giving the path to the output netCDF file to
 create.}
 
 \item{drop}{Logical. Currently not implemented.}
 
-\item{newdim}{Optional numeric values for the dimension created when `FUN`
+\item{newdim}{Optional numeric values for the dimension created when \code{FUN}
 returns a vector of length greater than one.}
 
 \item{name}{Optional character string giving the name of the output variable.
 By default, the original variable name is used.}
 
 \item{longname}{Optional character string giving the long name of the output
-variable. By default, a name based on `FUN` and the original variable long
+variable. By default, a name based on \code{FUN} and the original variable long
 name is generated.}
 
 \item{units}{Optional character string giving the units of the output
@@ -60,48 +60,35 @@ variable.}
 
 \item{force_v4}{Logical. Currently unused internally.}
 
-\item{ignore.case}{Logical. If `TRUE`, ignore case when matching dimension
-names supplied in `MARGIN`.}
+\item{ignore.case}{Logical. If \code{TRUE}, ignore case when matching dimension
+names supplied in \code{MARGIN}.}
 }
 \value{
-Invisibly returns `output`.
+Invisibly returns \code{output}.
 }
 \description{
 Reads a variable from a netCDF file, applies a function over one or more of
-its dimensions using [base::apply()], and writes the result to a new netCDF
+its dimensions using \code{\link[base:apply]{base::apply()}}, and writes the result to a new netCDF
 file.
 }
 \details{
-The selected variable is read into memory and processed with [base::apply()].
-The output retains the dimensions specified in `MARGIN`. If `FUN` returns a
+The selected variable is read into memory and processed with \code{\link[base:apply]{base::apply()}}.
+The output retains the dimensions specified in \code{MARGIN}. If \code{FUN} returns a
 vector of length greater than one, an additional dimension is appended to the
-result; its coordinate values are taken from `newdim` when provided, or
+result; its coordinate values are taken from \code{newdim} when provided, or
 generated automatically otherwise.
 }
 \examples{
-\dontrun{
-## Mean over the time dimension
-nc_apply(
-  filename = "input.nc",
-  varid = "temp",
-  MARGIN = c("lon", "lat"),
-  FUN = mean,
-  na.rm = TRUE,
-  output = "temp_mean.nc"
-)
-
-## Quantiles over the depth dimension
-nc_apply(
-  filename = "input.nc",
-  varid = "temp",
-  MARGIN = c("lon", "lat"),
-  FUN = quantile,
-  probs = c(0.25, 0.5, 0.75),
-  newdim = c(25, 50, 75),
-  output = "temp_quantiles.nc"
-)
-}
+local({
+  input = system.file("extdata",
+    "temperature_2001_01.nc",
+    package = "nctools",
+    mustWork = TRUE)
+  output = tempfile(fileext = ".nc")
+  on.exit(unlink(output))
+  nc_apply(input, "temperature", MARGIN = "time", FUN = mean, na.rm = TRUE, output = output)
+})
 }
 \seealso{
-[nc_subset()], [write_ncdf()], [base::apply()]
+\code{\link[=nc_subset]{nc_subset()}}, \code{\link[=write_ncdf]{write_ncdf()}}, \code{\link[base:apply]{base::apply()}}
 }
