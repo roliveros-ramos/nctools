@@ -30,7 +30,10 @@ nc_extract = function(filename, varid, output) {
   nc = nc_open(filename)
   on.exit(nc_close(nc))
   varid = .checkVarid(varid=varid, nc=nc)
-  ncNew = nc_create(filename=output, vars=nc$var[[varid]])
+  variable = nc$var[[varid]]
+  # Recompute storage chunks when recreating a variable (contiguous input has zeros).
+  variable$chunksizes = NA
+  ncNew = nc_create(filename=output, vars=variable)
   ncvar_put(ncNew, varid, ncvar_get(nc, varid, collapse_degen=FALSE))
   nc_close(ncNew)
   return(invisible(output))
@@ -423,6 +426,8 @@ nc_unlim = function(filename, unlim, output=NULL) {
 
   .makeUnlim = function(x, unlim) {
     names(x$dim) = sapply(x$dim, "[[", "name")
+    # Chunk sizes read from contiguous netCDF4 variables are not valid for creation.
+    x$chunksizes = NA
     if(is.null(x$dim[[unlim]])) return(x)
     x$dim[[unlim]]$unlim = TRUE
     x$unlim = TRUE
